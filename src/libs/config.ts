@@ -169,20 +169,26 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
           type: "number",
         },
         maxPrice: { type: "number" },
-        binStep: { type: "number" },
         curvature: { type: "number" },
         seedAmount: { type: "string" },
-        basePositionKey: { type: "string" },
         basePositionKeypairFilepath: { type: "string" },
+        operatorKeypairFilepath: { type: "string" },
+        positionOwner: { type: "string" },
+        feeOwner: { type: "string" },
+        lockReleasePoint: { type: "number" },
+        seedTokenXToPositionOwner: { type: "boolean" },
       },
       required: [
         "minPrice",
         "maxPrice",
-        "binStep",
         "curvature",
         "seedAmount",
-        "basePositionKey",
         "basePositionKeypairFilepath",
+        "operatorKeypairFilepath",
+        "positionOwner",
+        "feeOwner",
+        "lockReleasePoint",
+        "seedTokenXToPositionOwner",
       ],
     },
     singleBinSeedLiquidity: {
@@ -197,7 +203,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
         positionOwner: { type: "string" },
         feeOwner: { type: "string" },
         lockReleasePoint: { type: "number" },
-        seedTokenXToPositionOwner: { type: "boolean" }
+        seedTokenXToPositionOwner: { type: "boolean" },
       },
       required: [
         "price",
@@ -208,7 +214,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
         "positionOwner",
         "feeOwner",
         "lockReleasePoint",
-        "seedTokenXToPositionOwner"
+        "seedTokenXToPositionOwner",
       ],
     },
   },
@@ -310,11 +316,14 @@ export interface LockLiquidityAllocation {
 export interface LfgSeedLiquidityConfig {
   minPrice: number;
   maxPrice: number;
-  binStep: number;
   curvature: number;
   seedAmount: string;
-  basePositionKey: string;
   basePositionKeypairFilepath: string;
+  operatorKeypairFilepath: string;
+  positionOwner: string;
+  feeOwner: string;
+  lockReleasePoint: number;
+  seedTokenXToPositionOwner: boolean;
 }
 
 export interface SingleBinSeedLiquidityConfig {
