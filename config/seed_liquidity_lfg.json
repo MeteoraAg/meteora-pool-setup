@@ -8,10 +8,12 @@
   "lfgSeedLiquidity": {
     "minPrice": 0.003393,
     "maxPrice": 0.004393,
-    "binStep": 100,
     "curvature": 0.6,
-    "seedAmount": "1",
-    "basePositionKey": "ETp2wTykSe3iGYzPCn6upP8NVB7a1pe6WTZidGNJH7KC",
-    "basePositionKeypairFilepath": "keypair.json"
+    "basePositionKeypairFilepath": "keypair.json",
+    "operatorKeypairFilepath": "keypair.json",
+    "positionOwner": "2vqFyczcehkR7hTeZjEkiN5jvYnFXuFRinovqR2gakSb",
+    "feeOwner": "2vqFyczcehkR7hTeZjEkiN5jvYnFXuFRinovqR2gakSb",
+    "lockReleasePoint": 0,
+    "seedTokenXToPositionOwner": true
   }
 }

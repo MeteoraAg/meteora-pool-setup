@@ -103,10 +103,14 @@ async function main() {
   console.log(`- Using positionOwner ${positionOwner}`);
   console.log(`- Using feeOwner ${feeOwner}`);
   console.log(`- Using lockReleasePoint ${lockReleasePoint}`);
-  console.log(`- Using seedTokenXToPositionOwner ${config.singleBinSeedLiquidity.seedTokenXToPositionOwner}`);
+  console.log(
+    `- Using seedTokenXToPositionOwner ${config.singleBinSeedLiquidity.seedTokenXToPositionOwner}`,
+  );
 
   if (!config.singleBinSeedLiquidity.seedTokenXToPositionOwner) {
-    console.log(`WARNING: You selected seedTokenXToPositionOwner = false, you should manually send 1 lamport of token X to the position owner account to prove ownership.`)
+    console.log(
+      `WARNING: You selected seedTokenXToPositionOwner = false, you should manually send 1 lamport of token X to the position owner account to prove ownership.`,
+    );
   }
 
   const seedLiquidityIxs = await pair.seedLiquiditySingleBin(

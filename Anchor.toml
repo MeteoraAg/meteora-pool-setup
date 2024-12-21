@@ -1,0 +1,29 @@
+[features]
+seeds = false
+skip-lint = false
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "./src/tests/keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json"
+
+[[test.genesis]]
+address = "LbVRzDTvBDEcrthxfZ4RL6yiq3uZw8bS6MwtdY6UhFQ"
+program = "./src/tests/artifacts/lb_clmm.so"
+
+[[test.genesis]]
+address = "ammbh4CQztZ6txJ8AaQgPsWjd6o7GhmvopS2JAo5bCB"
+program = "./src/tests/artifacts/amm.so"
+
+[scripts]
+test = "yarn run ts-mocha --sort --type-check --bail -p ./tsconfig.json -t 1000000 tests/*.ts"
+build-local = "anchor build"
+deploy-local = "solana program deploy target/deploy/lb_clmm.so --keypair keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json --program-id keys/localnet/program-LbVRzDTvBDEcrthxfZ4RL6yiq3uZw8bS6MwtdY6UhFQ.json"
+
+[test]
+startup_wait = 50000
+
+[toolchain]
+anchor_version = "0.28.0"
