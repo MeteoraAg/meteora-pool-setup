@@ -1,8 +1,25 @@
-import { CustomizableFcfsVaultParams, CustomizableProrataVaultParams, IDL, PoolType, SEED } from "@meteora-ag/alpha-vault";
-import { ComputeBudgetProgram, Connection, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import {
+  CustomizableFcfsVaultParams,
+  CustomizableProrataVaultParams,
+  IDL,
+  PoolType,
+  SEED,
+} from "@meteora-ag/alpha-vault";
+import {
+  ComputeBudgetProgram,
+  Connection,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 import { ALPHA_VAULT_PROGRAM_IDS } from "./constants";
 import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
-import { getAlphaVaultWhitelistMode, getAmountInLamports, runSimulateTransaction } from "./utils";
+import {
+  getAlphaVaultWhitelistMode,
+  getAmountInLamports,
+  runSimulateTransaction,
+} from "./utils";
 import { FcfsAlphaVaultConfig, ProrataAlphaVaultConfig } from "./config";
 import { BN } from "bn.js";
 
@@ -70,7 +87,7 @@ export async function createFcfsAlphaVault(
     },
     wallet.publicKey,
     computeUnitPriceMicroLamports,
-    opts
+    opts,
   )) as Transaction;
 
   if (dryRun) {
@@ -147,7 +164,7 @@ export async function createProrataAlphaVault(
     },
     wallet.publicKey,
     computeUnitPriceMicroLamports,
-    opts
+    opts,
   )) as Transaction;
 
   if (dryRun) {
@@ -177,10 +194,12 @@ async function createCustomizableFcfsVault(
   owner: PublicKey,
   computeUnitPriceMicroLamports: number,
   opts?: {
-    alphaVaultProgramId: PublicKey
-  }
+    alphaVaultProgramId: PublicKey;
+  },
 ) {
-  const alphaVaultProgramId = opts?.alphaVaultProgramId || new PublicKey(ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]);
+  const alphaVaultProgramId =
+    opts?.alphaVaultProgramId ||
+    new PublicKey(ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]);
   const {
     poolAddress,
     poolType,
@@ -251,10 +270,12 @@ async function createCustomizableProrataVault(
   owner: PublicKey,
   computeUnitPriceMicroLamports: number,
   opts?: {
-    alphaVaultProgramId: PublicKey
-  }
+    alphaVaultProgramId: PublicKey;
+  },
 ) {
-  const alphaVaultProgramId = opts?.alphaVaultProgramId || new PublicKey(ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]);
+  const alphaVaultProgramId =
+    opts?.alphaVaultProgramId ||
+    new PublicKey(ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]);
   const {
     poolAddress,
     poolType,

@@ -247,6 +247,17 @@ export function getAlphaVaultWhitelistMode(
   }
 }
 
+export function toAlphaVaulSdkPoolType(poolType: PoolTypeConfig): PoolType {
+  switch (poolType) {
+    case PoolTypeConfig.Dynamic:
+      return PoolType.DYNAMIC;
+    case PoolTypeConfig.Dlmm:
+      return PoolType.DLMM;
+    default:
+      throw new Error(`Unsupported alpha vault pool type: ${poolType}`);
+  }
+}
+
 /**
  * Modify priority fee in transaction
  * @param tx
