@@ -10,7 +10,11 @@ import {
   createPermissionlessDynamicPool,
 } from "../index";
 import { Wallet, web3 } from "@coral-xyz/anchor";
-import { MeteoraConfig } from "../libs/config";
+import {
+  ActivationTypeConfig,
+  MeteoraConfig,
+  PriceRoundingConfig,
+} from "../libs/config";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -183,7 +187,7 @@ describe("Test Create Pool", () => {
         baseAmount: 1000,
         quoteAmount: 0.1,
         tradeFeeNumerator: 2500,
-        activationType: "timestamp",
+        activationType: ActivationTypeConfig.Timestamp,
         activationPoint: null,
         hasAlphaVault: false,
       },
@@ -218,9 +222,9 @@ describe("Test Create Pool", () => {
         binStep: 200,
         feeBps: 200,
         initialPrice: 0.5,
-        activationType: "timestamp",
+        activationType: ActivationTypeConfig.Timestamp,
         activationPoint: null,
-        priceRounding: "up",
+        priceRounding: PriceRoundingConfig.Up,
         hasAlphaVault: false,
       },
       dynamicAmm: null,

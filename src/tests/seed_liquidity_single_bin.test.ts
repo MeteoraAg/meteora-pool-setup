@@ -7,7 +7,11 @@ import {
   seedLiquiditySingleBin,
 } from "../index";
 import { BN, Wallet, web3 } from "@coral-xyz/anchor";
-import { MeteoraConfig } from "../libs/config";
+import {
+  ActivationTypeConfig,
+  MeteoraConfig,
+  PriceRoundingConfig,
+} from "../libs/config";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -145,9 +149,9 @@ describe("Test Seed Liquidity Single Bin", () => {
         binStep,
         feeBps,
         initialPrice,
-        activationType: "slot",
+        activationType: ActivationTypeConfig.Slot,
         activationPoint,
-        priceRounding: "up",
+        priceRounding: PriceRoundingConfig.Up,
         hasAlphaVault: false,
       },
       dynamicAmm: null,

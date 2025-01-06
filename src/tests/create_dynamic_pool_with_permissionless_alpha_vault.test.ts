@@ -1,13 +1,9 @@
-import {
-  Keypair,
-  PublicKey,
-} from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import { SOL_TOKEN_MINT } from "../libs/constants";
-import {
-  createPermissionlessDynamicPool,
-} from "../index";
+import { createPermissionlessDynamicPool } from "../index";
 import { web3 } from "@coral-xyz/anchor";
 import {
+  ActivationTypeConfig,
   AlphaVaultTypeConfig,
   FcfsAlphaVaultConfig,
   MeteoraConfig,
@@ -36,6 +32,7 @@ import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mer
 import {
   createFcfsAlphaVault,
   createProrataAlphaVault,
+  deriveAlphaVault,
 } from "../libs/create_alpha_vault_utils";
 import AlphaVault, {
   Permissionless,
@@ -163,7 +160,7 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
         baseAmount: 1000,
         quoteAmount: 1,
         tradeFeeNumerator: 2500,
-        activationType: "slot",
+        activationType: ActivationTypeConfig.Slot,
         activationPoint: activationPoint,
         hasAlphaVault: true,
       },
@@ -354,7 +351,7 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
         baseAmount: 1000,
         quoteAmount: 1,
         tradeFeeNumerator: 2500,
-        activationType: "slot",
+        activationType: ActivationTypeConfig.Slot,
         activationPoint: activationPoint,
         hasAlphaVault: true,
       },
