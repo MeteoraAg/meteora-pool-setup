@@ -1,13 +1,16 @@
-import {
+import AlphaVault, {
   CustomizableFcfsVaultParams,
   CustomizableProrataVaultParams,
   IDL,
   PoolType,
   SEED,
+  VaultMode,
+  WalletDepositCap,
 } from "@meteora-ag/alpha-vault";
 import {
   ComputeBudgetProgram,
   Connection,
+  Keypair,
   PublicKey,
   SystemProgram,
   Transaction,
@@ -20,7 +23,12 @@ import {
   getAmountInLamports,
   runSimulateTransaction,
 } from "./utils";
-import { FcfsAlphaVaultConfig, ProrataAlphaVaultConfig } from "./config";
+import {
+  AlphaVaultTypeConfig,
+  FcfsAlphaVaultConfig,
+  ProrataAlphaVaultConfig,
+  WhitelistModeConfig,
+} from "./config";
 import { BN } from "bn.js";
 
 export async function createFcfsAlphaVault(
@@ -188,6 +196,121 @@ export async function createProrataAlphaVault(
   }
 }
 
+export async function createPermissionedAlphaVaultWithAuthority(
+  connection: Connection,
+  wallet: Wallet,
+  vaultAuthority: Keypair,
+  alphaVaultType: AlphaVaultTypeConfig,
+  poolType: PoolType,
+  poolAddress: PublicKey,
+  baseMint: PublicKey,
+  quoteMint: PublicKey,
+  quoteDecimals: number,
+  params: FcfsAlphaVaultConfig | ProrataAlphaVaultConfig,
+  whitelistList: WalletDepositCap[],
+  dryRun: boolean,
+  computeUnitPriceMicroLamports: number,
+  opts?: {
+    alphaVaultProgramId: PublicKey;
+  },
+): Promise<void> {
+  if (params.whitelistMode != WhitelistModeConfig.PermissionedWithAuthority) {
+    throw new Error(`Invalid whitelist mode ${params.whitelistMode}. Only Permissioned with authority is allowed 
+    `);
+  }
+
+  // 1. Create alpha vault
+  if (alphaVaultType == AlphaVaultTypeConfig.Fcfs) {
+    await createFcfsAlphaVault(
+      connection,
+      wallet,
+      poolType,
+      poolAddress,
+      baseMint,
+      quoteMint,
+      quoteDecimals,
+      params as FcfsAlphaVaultConfig,
+      dryRun,
+      computeUnitPriceMicroLamports,
+      opts,
+    );
+  } else if (alphaVaultType == AlphaVaultTypeConfig.Prorata) {
+    await createProrataAlphaVault(
+      connection,
+      wallet,
+      poolType,
+      poolAddress,
+      baseMint,
+      quoteMint,
+      quoteDecimals,
+      params as ProrataAlphaVaultConfig,
+      dryRun,
+      computeUnitPriceMicroLamports,
+      opts,
+    );
+  }
+
+  // 2. Create StakeEscrow account for each whitelisted wallet
+  const alphaVaultProgramId = new PublicKey(
+    opts?.alphaVaultProgramId ?? ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"],
+  );
+
+  const [alphaVaultPubkey] = deriveAlphaVault(
+    wallet.publicKey,
+    poolAddress,
+    alphaVaultProgramId,
+  );
+
+  console.log("Creating stake escrow accounts...");
+
+  const alphaVault = await createAlphaVaultInstance(
+    connection,
+    alphaVaultProgramId,
+    alphaVaultPubkey,
+  );
+
+  // Create StakeEscrow accounts for whitelist list
+  const instructions =
+    await alphaVault.createMultipleStakeEscrowByAuthorityInstructions(
+      whitelistList,
+      vaultAuthority.publicKey,
+    );
+
+  const { blockhash, lastValidBlockHeight } =
+    await connection.getLatestBlockhash("confirmed");
+  const setPriorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: computeUnitPriceMicroLamports,
+  });
+
+  const createStakeEscrowAccountsTx = new Transaction({
+    blockhash,
+    lastValidBlockHeight,
+    feePayer: vaultAuthority.publicKey,
+  })
+    .add(...instructions)
+    .add(setPriorityFeeIx);
+
+  if (dryRun) {
+    console.log(`\n> Simulating create stake escrow accounts tx...`);
+    await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
+      createStakeEscrowAccountsTx,
+    ]);
+  } else {
+    console.log(`>> Sending init alpha vault transaction...`);
+    const createStakeEscrowAccountTxHash = await sendAndConfirmTransaction(
+      connection,
+      createStakeEscrowAccountsTx,
+      [vaultAuthority],
+    ).catch((err) => {
+      console.error(err);
+      throw err;
+    });
+    console.log(
+      `>>> Create stake escrow accounts successfully with tx hash: ${createStakeEscrowAccountTxHash}`,
+    );
+  }
+}
+
 async function createCustomizableFcfsVault(
   connection: Connection,
   vaultParam: CustomizableFcfsVaultParams,
@@ -346,4 +469,22 @@ export function deriveAlphaVault(
     [Buffer.from(SEED.vault), base.toBuffer(), lbPair.toBuffer()],
     programId,
   );
+}
+
+export async function createAlphaVaultInstance(
+  connection: Connection,
+  alphaVaultProgramId: PublicKey,
+  vaultAddress: PublicKey,
+): Promise<AlphaVault> {
+  const provider = new AnchorProvider(
+    connection,
+    {} as any,
+    AnchorProvider.defaultOptions(),
+  );
+  const program = new Program(IDL, alphaVaultProgramId, provider);
+
+  const vault = await program.account.vault.fetch(vaultAddress);
+  const vaultMode = vault.vaultMode === 0 ? VaultMode.PRORATA : VaultMode.FCFS;
+
+  return new AlphaVault(program, vaultAddress, vault, vaultMode);
 }
