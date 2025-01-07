@@ -296,7 +296,7 @@ export async function createPermissionedAlphaVaultWithAuthority(
       createStakeEscrowAccountsTx,
     ]);
   } else {
-    console.log(`>> Sending init alpha vault transaction...`);
+    console.log(`>> Sending stake escrow accounts transaction...`);
     const createStakeEscrowAccountTxHash = await sendAndConfirmTransaction(
       connection,
       createStakeEscrowAccountsTx,
