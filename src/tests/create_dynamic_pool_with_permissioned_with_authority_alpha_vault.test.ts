@@ -187,7 +187,6 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
       },
     );
 
-    const vaultAuthority = payerKeypair;
     const alphaVaultType = config.alphaVault.alphaVaultType;
     const poolType = toAlphaVaulSdkPoolType(config.alphaVault.poolType);
     const poolAddress =
@@ -222,7 +221,6 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
     await createPermissionedAlphaVaultWithAuthority(
       connection,
       payerWallet,
-      vaultAuthority,
       alphaVaultType,
       poolType,
       poolAddress,

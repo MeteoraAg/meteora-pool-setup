@@ -199,7 +199,6 @@ export async function createProrataAlphaVault(
 export async function createPermissionedAlphaVaultWithAuthority(
   connection: Connection,
   wallet: Wallet,
-  vaultAuthority: Keypair,
   alphaVaultType: AlphaVaultTypeConfig,
   poolType: PoolType,
   poolAddress: PublicKey,
@@ -273,7 +272,7 @@ export async function createPermissionedAlphaVaultWithAuthority(
   const instructions =
     await alphaVault.createMultipleStakeEscrowByAuthorityInstructions(
       whitelistList,
-      vaultAuthority.publicKey,
+      wallet.publicKey,
     );
 
   const { blockhash, lastValidBlockHeight } =
@@ -285,7 +284,7 @@ export async function createPermissionedAlphaVaultWithAuthority(
   const createStakeEscrowAccountsTx = new Transaction({
     blockhash,
     lastValidBlockHeight,
-    feePayer: vaultAuthority.publicKey,
+    feePayer: wallet.publicKey,
   })
     .add(...instructions)
     .add(setPriorityFeeIx);
@@ -300,7 +299,7 @@ export async function createPermissionedAlphaVaultWithAuthority(
     const createStakeEscrowAccountTxHash = await sendAndConfirmTransaction(
       connection,
       createStakeEscrowAccountsTx,
-      [vaultAuthority],
+      [wallet.payer],
     ).catch((err) => {
       console.error(err);
       throw err;

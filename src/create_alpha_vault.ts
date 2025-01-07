@@ -21,11 +21,16 @@ import {
   AlphaVaultTypeConfig,
   PoolTypeConfig,
   toAlphaVaulSdkPoolType,
+  WhitelistModeConfig,
+  parseCsv,
 } from ".";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 
 import { BN } from "bn.js";
-import AlphaVault, { PoolType } from "@meteora-ag/alpha-vault";
+import AlphaVault, {
+  PoolType,
+  WalletDepositCap,
+} from "@meteora-ag/alpha-vault";
 import {
   LBCLMM_PROGRAM_IDS,
   deriveCustomizablePermissionlessLbPair,
@@ -36,6 +41,7 @@ import {
 } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils";
 import {
   createFcfsAlphaVault,
+  createPermissionedAlphaVaultWithAuthority,
   createProrataAlphaVault,
 } from "./libs/create_alpha_vault_utils";
 
@@ -90,36 +96,81 @@ async function main() {
 
   console.log(`\n> Pool address: ${poolKey}, pool type ${poolType}`);
 
-  if (config.alphaVault.alphaVaultType == AlphaVaultTypeConfig.Fcfs) {
-    await createFcfsAlphaVault(
+  // create permissioned alpha vault with authority
+  if (
+    config.alphaVault.whitelistMode ==
+    WhitelistModeConfig.PermissionedWithAuthority
+  ) {
+    if (!config.alphaVault.whitelistFilepath) {
+      throw new Error("Missing whitelist filepath in configuration");
+    }
+
+    interface WhitelistCsv {
+      address: string;
+      maxAmount: string;
+    }
+    const whitelistListCsv: Array<WhitelistCsv> = await parseCsv(
+      config.alphaVault.whitelistFilepath,
+    );
+
+    const whitelistList: Array<WalletDepositCap> = new Array(0);
+    for (const item of whitelistListCsv) {
+      whitelistList.push({
+        address: new PublicKey(item.address),
+        maxAmount: getAmountInLamports(item.maxAmount, quoteDecimals),
+      });
+    }
+
+    await createPermissionedAlphaVaultWithAuthority(
       connection,
       wallet,
+      config.alphaVault.alphaVaultType,
       toAlphaVaulSdkPoolType(poolType),
       poolKey,
       baseMint,
       quoteMint,
       quoteDecimals,
-      config.alphaVault as FcfsAlphaVaultConfig,
+      config.alphaVault,
+      whitelistList,
       config.dryRun,
       config.computeUnitPriceMicroLamports,
     );
-  } else if (config.alphaVault.alphaVaultType == AlphaVaultTypeConfig.Prorata) {
-    await createProrataAlphaVault(
-      connection,
-      wallet,
-      toAlphaVaulSdkPoolType(poolType),
-      poolKey,
-      baseMint,
-      quoteMint,
-      quoteDecimals,
-      config.alphaVault as ProrataAlphaVaultConfig,
-      config.dryRun,
-      config.computeUnitPriceMicroLamports,
-    );
-  } else {
-    throw new Error(
-      `Invalid alpha vault type ${config.alphaVault.alphaVaultType}`,
-    );
+  } else if (
+    config.alphaVault.whitelistMode == WhitelistModeConfig.Permissionless
+  ) {
+    if (config.alphaVault.alphaVaultType == AlphaVaultTypeConfig.Fcfs) {
+      await createFcfsAlphaVault(
+        connection,
+        wallet,
+        toAlphaVaulSdkPoolType(poolType),
+        poolKey,
+        baseMint,
+        quoteMint,
+        quoteDecimals,
+        config.alphaVault as FcfsAlphaVaultConfig,
+        config.dryRun,
+        config.computeUnitPriceMicroLamports,
+      );
+    } else if (
+      config.alphaVault.alphaVaultType == AlphaVaultTypeConfig.Prorata
+    ) {
+      await createProrataAlphaVault(
+        connection,
+        wallet,
+        toAlphaVaulSdkPoolType(poolType),
+        poolKey,
+        baseMint,
+        quoteMint,
+        quoteDecimals,
+        config.alphaVault as ProrataAlphaVaultConfig,
+        config.dryRun,
+        config.computeUnitPriceMicroLamports,
+      );
+    } else {
+      throw new Error(
+        `Invalid alpha vault type ${config.alphaVault.alphaVaultType}`,
+      );
+    }
   }
 }
 
