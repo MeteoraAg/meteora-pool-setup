@@ -1,4 +1,4 @@
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js";
 import { SOL_TOKEN_MINT } from "../libs/constants";
 import {
   createPermissionlessDynamicPool,
@@ -29,8 +29,13 @@ import {
   ALPHA_VAULT_PROGRAM_ID,
 } from "./setup";
 import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils";
-import { createPermissionedAlphaVaultWithAuthority } from "../libs/create_alpha_vault_utils";
+import {
+  createAlphaVaultInstance,
+  createPermissionedAlphaVaultWithAuthority,
+  deriveAlphaVault,
+} from "../libs/create_alpha_vault_utils";
 import { BN } from "bn.js";
+import { PermissionWithAuthority } from "@meteora-ag/alpha-vault";
 
 describe("Test create dynamic pool with permissioned authority fcfs alpha vault", () => {
   const WEN_DECIMALS = 5;
@@ -160,7 +165,7 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
         depositingPoint,
         startVestingPoint,
         endVestingPoint,
-        maxDepositCap: 0.5,
+        maxDepositCap: 5,
         individualDepositingCap: 0.01,
         escrowFee: 0,
         whitelistMode: WhitelistModeConfig.PermissionedWithAuthority,
@@ -193,19 +198,23 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
       );
     const alphaVaultConfig = config.alphaVault;
 
-    const whiteListedWallet_1 = Keypair.generate();
-    const whiteListedWallet_2 = Keypair.generate();
-    const whiteListedWallet_1_maxAmount = new BN(1 * 10 ** 9);
-    const whiteListedWallet_2_maxAmount = new BN(5 * 10 ** 9);
+    // Generate whitelist wallets
+    const whitelistWallet_1 = Keypair.generate();
+    const whitelistWallet_2 = Keypair.generate();
+    await connection.requestAirdrop(whitelistWallet_1.publicKey, 10 * 10 ** 9);
+    await connection.requestAirdrop(whitelistWallet_2.publicKey, 10 * 10 ** 9);
+
+    const whitelistWallet_1_maxAmount = new BN(1 * 10 ** 9);
+    const whitelistWallet_2_maxAmount = new BN(5 * 10 ** 9);
 
     const whitelistList = [
       {
-        address: whiteListedWallet_1.publicKey,
-        maxAmount: whiteListedWallet_1_maxAmount,
+        address: whitelistWallet_1.publicKey,
+        maxAmount: whitelistWallet_1_maxAmount,
       },
       {
-        address: whiteListedWallet_2.publicKey,
-        maxAmount: whiteListedWallet_2_maxAmount,
+        address: whitelistWallet_2.publicKey,
+        maxAmount: whitelistWallet_2_maxAmount,
       },
     ];
 
@@ -228,5 +237,80 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
         alphaVaultProgramId: ALPHA_VAULT_PROGRAM_ID,
       },
     );
+
+    const [alphaVaultPubkey] = deriveAlphaVault(
+      payerWallet.publicKey,
+      poolAddress,
+      ALPHA_VAULT_PROGRAM_ID,
+    );
+
+    const alphaVault = await createAlphaVaultInstance(
+      connection,
+      ALPHA_VAULT_PROGRAM_ID,
+      alphaVaultPubkey,
+    );
+
+    expect(alphaVault.vault.whitelistMode).toEqual(PermissionWithAuthority);
+
+    {
+      const depositAmount = new BN(5 * 10 ** 8);
+      const depositTx = await alphaVault.deposit(
+        depositAmount,
+        whitelistWallet_1.publicKey,
+      );
+
+      const depositTxHash = await sendAndConfirmTransaction(
+        connection,
+        depositTx,
+        [whitelistWallet_1],
+      ).catch((e) => {
+        console.error(e);
+        throw e;
+      });
+
+      const whitelistWalletEscrow_1 = await alphaVault.getEscrow(
+        whitelistWallet_1.publicKey,
+      );
+      expect(whitelistWalletEscrow_1.totalDeposit.toString()).toEqual(
+        depositAmount.toString(),
+      );
+    }
+
+    {
+      const depositAmount = new BN(5 * 10 ** 8);
+      const depositTx = await alphaVault.deposit(
+        depositAmount,
+        whitelistWallet_1.publicKey,
+      );
+
+      const depositTxHash = await sendAndConfirmTransaction(
+        connection,
+        depositTx,
+        [whitelistWallet_1],
+      ).catch((e) => {
+        console.error(e);
+        throw e;
+      });
+
+      const whitelistWalletEscrow_1 = await alphaVault.getEscrow(
+        whitelistWallet_1.publicKey,
+      );
+      expect(whitelistWalletEscrow_1.totalDeposit.toString()).toEqual(
+        (depositAmount * 2).toString(),
+      );
+    }
+
+    // deposit exceed cap
+    {
+      const depositAmount = new BN(1 * 10 ** 8);
+      const depositTx = await alphaVault.deposit(
+        depositAmount,
+        whitelistWallet_1.publicKey,
+      );
+
+      await expect(
+        sendAndConfirmTransaction(connection, depositTx, [whitelistWallet_1]),
+      ).rejects.toThrow();
+    }
   });
 });

@@ -460,14 +460,15 @@ async function createCustomizableProrataVault(
   }).add(createTx);
 }
 
+// Derive alpha vault public key
 export function deriveAlphaVault(
   base: PublicKey,
   lbPair: PublicKey,
-  programId: PublicKey,
+  alphaVaultProgramId: PublicKey,
 ) {
   return PublicKey.findProgramAddressSync(
     [Buffer.from(SEED.vault), base.toBuffer(), lbPair.toBuffer()],
-    programId,
+    alphaVaultProgramId,
   );
 }
 
