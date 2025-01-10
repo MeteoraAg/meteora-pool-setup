@@ -5,7 +5,9 @@ import {
   Keypair,
   PublicKey,
   Transaction,
+  TransactionInstruction,
   VersionedTransaction,
+  sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import * as fs from "fs";
 import { parseArgs } from "util";
@@ -14,6 +16,7 @@ import Decimal from "decimal.js";
 import {
   SOL_TOKEN_DECIMALS,
   SOL_TOKEN_MINT,
+  TX_SIZE_LIMIT_BYTES,
   USDC_TOKEN_DECIMALS,
   USDC_TOKEN_MINT,
 } from "./constants";
@@ -276,6 +279,59 @@ export function toAlphaVaulSdkPoolType(poolType: PoolTypeConfig): PoolType {
       return PoolType.DLMM;
     default:
       throw new Error(`Unsupported alpha vault pool type: ${poolType}`);
+  }
+}
+
+/// Divine the instructions to multiple transactions
+export async function handleSendTxs(
+  connection: Connection,
+  instructions: TransactionInstruction[],
+  instructionsPerTx: number,
+  payer: Keypair,
+  computeUnitPriceMicroLamports: number,
+  dryRun: boolean,
+  txLabel?: string,
+): Promise<void> {
+  const numTransactions = Math.ceil(instructions.length / instructionsPerTx);
+
+  for (let i = 0; i < numTransactions; i++) {
+    const { blockhash, lastValidBlockHeight } =
+      await connection.getLatestBlockhash("confirmed");
+    const setPriorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
+      microLamports: computeUnitPriceMicroLamports,
+    });
+    let tx = new Transaction({
+      blockhash,
+      lastValidBlockHeight,
+      feePayer: payer.publicKey,
+    }).add(setPriorityFeeIx);
+    let lowerIndex = i * instructionsPerTx;
+    let upperIndex = (i + 1) * instructionsPerTx;
+    for (let j = lowerIndex; j < upperIndex; j++) {
+      if (instructions[j]) tx.add(instructions[j]);
+    }
+
+    const txSize = tx.serialize({
+      verifySignatures: false,
+    }).length;
+    console.log(`Tx number ${i + 1} txSize = ${txSize}`);
+
+    let label = txLabel ?? "";
+    if (dryRun) {
+      console.log(`\n> Simulating ${label} tx number ${i + 1}...`);
+      await runSimulateTransaction(connection, [payer], payer.publicKey, [tx]);
+    } else {
+      console.log(`>> Sending ${label} transaction number ${i + 1}...`);
+      const txHash = await sendAndConfirmTransaction(connection, tx, [
+        payer,
+      ]).catch((err) => {
+        console.error(err);
+        throw err;
+      });
+      console.log(
+        `>>> Transaction ${i + 1} ${label} successfully with tx hash: ${txHash}`,
+      );
+    }
   }
 }
 

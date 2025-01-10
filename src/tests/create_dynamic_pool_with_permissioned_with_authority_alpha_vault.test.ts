@@ -198,24 +198,21 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
     const alphaVaultConfig = config.alphaVault;
 
     // Generate whitelist wallets
-    const whitelistWallet_1 = Keypair.generate();
-    const whitelistWallet_2 = Keypair.generate();
-    await connection.requestAirdrop(whitelistWallet_1.publicKey, 10 * 10 ** 9);
-    await connection.requestAirdrop(whitelistWallet_2.publicKey, 10 * 10 ** 9);
+    const whitelistWallets: Array<Keypair> = [];
+    for (let i = 0; i < 12; i++) {
+      const wallet = Keypair.generate();
+      whitelistWallets.push(wallet);
+      await connection.requestAirdrop(wallet.publicKey, 10 * 10 ** 9);
+    }
 
-    const whitelistWallet_1_maxAmount = new BN(1 * 10 ** 9);
-    const whitelistWallet_2_maxAmount = new BN(5 * 10 ** 9);
+    const whitelistWallet_1 = whitelistWallets[0];
 
-    const whitelistList = [
-      {
-        address: whitelistWallet_1.publicKey,
-        maxAmount: whitelistWallet_1_maxAmount,
-      },
-      {
-        address: whitelistWallet_2.publicKey,
-        maxAmount: whitelistWallet_2_maxAmount,
-      },
-    ];
+    const whitelistList = whitelistWallets.map((keypair) => {
+      return {
+        address: keypair.publicKey,
+        maxAmount: new BN(1 * 10 ** 9),
+      };
+    });
 
     // 2. Create permissioned alpha vault
     await createPermissionedAlphaVaultWithAuthority(

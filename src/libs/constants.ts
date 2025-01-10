@@ -10,6 +10,9 @@ export const USDC_TOKEN_MINT = new PublicKey(
 export const SOL_TOKEN_DECIMALS = 9;
 export const USDC_TOKEN_DECIMALS = 6;
 
+export const TX_SIZE_LIMIT_BYTES = 1232;
+export const MAX_INSTRUCTIONS_PER_STAKE_ESCROW_ACCOUNTS_CREATED = 8;
+
 export const DLMM_PROGRAM_IDS = {
   devnet: "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
   localhost: "LbVRzDTvBDEcrthxfZ4RL6yiq3uZw8bS6MwtdY6UhFQ",

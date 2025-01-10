@@ -21,6 +21,7 @@ import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
 import {
   getAlphaVaultWhitelistMode,
   getAmountInLamports,
+  handleSendTxs,
   runSimulateTransaction,
 } from "./utils";
 import {
@@ -275,39 +276,15 @@ export async function createPermissionedAlphaVaultWithAuthority(
       wallet.publicKey,
     );
 
-  const { blockhash, lastValidBlockHeight } =
-    await connection.getLatestBlockhash("confirmed");
-  const setPriorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
-    microLamports: computeUnitPriceMicroLamports,
-  });
-
-  const createStakeEscrowAccountsTx = new Transaction({
-    blockhash,
-    lastValidBlockHeight,
-    feePayer: wallet.publicKey,
-  })
-    .add(...instructions)
-    .add(setPriorityFeeIx);
-
-  if (dryRun) {
-    console.log(`\n> Simulating create stake escrow accounts tx...`);
-    await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
-      createStakeEscrowAccountsTx,
-    ]);
-  } else {
-    console.log(`>> Sending stake escrow accounts transaction...`);
-    const createStakeEscrowAccountTxHash = await sendAndConfirmTransaction(
-      connection,
-      createStakeEscrowAccountsTx,
-      [wallet.payer],
-    ).catch((err) => {
-      console.error(err);
-      throw err;
-    });
-    console.log(
-      `>>> Create stake escrow accounts successfully with tx hash: ${createStakeEscrowAccountTxHash}`,
-    );
-  }
+  await handleSendTxs(
+    connection,
+    instructions,
+    MAX_INSTRUCTIONS_PER_STAKE_ESCROW_ACCOUNTS_CREATED,
+    wallet.payer,
+    computeUnitPriceMicroLamports,
+    dryRun,
+    "create stake escrow accounts",
+  );
 }
 
 async function createCustomizableFcfsVault(
