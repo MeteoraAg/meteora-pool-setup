@@ -16,7 +16,7 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import { ALPHA_VAULT_PROGRAM_IDS } from "./constants";
+import { ALPHA_VAULT_PROGRAM_IDS, MAX_INSTRUCTIONS_PER_STAKE_ESCROW_ACCOUNTS_CREATED } from "./constants";
 import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
 import {
   getAlphaVaultWhitelistMode,
