@@ -126,7 +126,7 @@ describe("Test Create Pool", () => {
     );
   });
 
-  it("Should able to create Basic Dynamic AMM pool", async () => {
+  it("Should be able to create Basic Dynamic AMM pool", async () => {
     const config: MeteoraConfig = {
       dryRun: false,
       rpcUrl,

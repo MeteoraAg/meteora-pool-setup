@@ -72,7 +72,7 @@ export function extraConfigValidation(config: MeteoraConfig) {
       config.alphaVault.poolType != "dlmm"
     ) {
       throw new Error(
-        `Alpha vault pool tyep ${config.alphaVault.poolType} isn't supported.`,
+        `Alpha vault pool type ${config.alphaVault.poolType} isn't supported.`,
       );
     }
   }

@@ -123,7 +123,7 @@ async function main() {
     ]);
   } else {
     console.log(`>> Sending init alpha vault transaction...`);
-    const initAlphaVaulTxHash = await sendAndConfirmTransaction(
+    const initAlphaVaultTxHash = await sendAndConfirmTransaction(
       connection,
       initAlphaVaultTx,
       [wallet.payer],
@@ -132,7 +132,7 @@ async function main() {
       throw err;
     });
     console.log(
-      `>>> Alpha vault initialized successfully with tx hash: ${initAlphaVaulTxHash}`,
+      `>>> Alpha vault initialized successfully with tx hash: ${initAlphaVaultTxHash}`,
     );
   }
 }
