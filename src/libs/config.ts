@@ -40,6 +40,11 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
     },
     quoteSymbol: {
       type: "string",
+      nullable: true,
+    },
+    quoteMint: {
+      type: "string",
+      nullable: true
     },
     dynamicAmm: {
       type: "object",
@@ -248,8 +253,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
     "rpcUrl",
     "dryRun",
     "keypairFilePath",
-    "computeUnitPriceMicroLamports",
-    "quoteSymbol",
+    "computeUnitPriceMicroLamports"
   ],
   additionalProperties: true,
 };
@@ -261,7 +265,8 @@ export interface MeteoraConfig {
   computeUnitPriceMicroLamports: number;
   createBaseToken: CreateBaseMintConfig | null;
   baseMint: string | null;
-  quoteSymbol: string;
+  quoteSymbol?: string;
+  quoteMint?: string;
   dynamicAmm: DynamicAmmConfig | null;
   dlmm: DlmmConfig | null;
   alphaVault: FcfsAlphaVaultConfig | ProrataAlphaVaultConfig | null;

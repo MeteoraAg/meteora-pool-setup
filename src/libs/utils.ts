@@ -34,6 +34,7 @@ import {
   PriceRoundingConfig,
   WhitelistModeConfig,
 } from "..";
+import { getMint } from "@solana/spl-token";
 
 export const DEFAULT_ADD_LIQUIDITY_CU = 800_000;
 
@@ -55,6 +56,14 @@ export function extraConfigValidation(config: MeteoraConfig) {
     throw new Error(
       "Both Dynamic AMM and DLMM configuration cannot be set simultaneously.",
     );
+  }
+
+  if (config.dlmm && config.dlmm.hasAlphaVault) {
+    if (config.quoteSymbol == null && config.quoteMint == null) {
+      throw new Error(
+        "Either quoteSymbol or quoteMint must be provided for DLMM",
+      );
+    }
   }
 
   if (config.alphaVault) {
@@ -114,7 +123,15 @@ export function getDecimalizedAmount(amountLamport: BN, decimals: number): BN {
   return amountLamport / new BN(10 ** decimals);
 }
 
-export function getQuoteMint(quoteSymbol: string): PublicKey {
+export function getQuoteMint(quoteSymbol?: string, quoteMint?: string): PublicKey {
+  if (quoteSymbol == null && quoteMint == null) {
+    throw new Error(`Either quoteSymbol or quoteMint must be provided`);
+  }
+
+  if (quoteMint) {
+    return new PublicKey(quoteMint);
+  }
+
   if (quoteSymbol.toLowerCase() == "sol") {
     return new PublicKey(SOL_TOKEN_MINT);
   } else if (quoteSymbol.toLowerCase() == "usdc") {
@@ -124,7 +141,15 @@ export function getQuoteMint(quoteSymbol: string): PublicKey {
   }
 }
 
-export function getQuoteDecimals(quoteSymbol: string): number {
+export async function getQuoteDecimals(connection: Connection, quoteSymbol?: string, quoteMint?: string): Promise<number> {
+  if (quoteSymbol == null && quoteMint == null) {
+    throw new Error(`Either quoteSymbol or quoteMint must be provided`);
+  }
+  if (quoteMint) {
+    const mintAccount = await getMint(connection, new PublicKey(quoteMint));
+    const decimals = mintAccount.decimals;
+    return decimals;
+  }
   if (quoteSymbol.toLowerCase() == "sol") {
     return SOL_TOKEN_DECIMALS;
   } else if (quoteSymbol.toLowerCase() == "usdc") {

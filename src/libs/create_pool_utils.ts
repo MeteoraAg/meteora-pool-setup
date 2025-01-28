@@ -46,7 +46,7 @@ export async function createPermissionlessDynamicPool(
   }
   console.log("\n> Initializing Permissionless Dynamic AMM pool...");
 
-  const quoteDecimals = getQuoteDecimals(config.quoteSymbol);
+  const quoteDecimals = await getQuoteDecimals(connection, config.quoteSymbol, config.quoteMint);
   const baseMintAccount = await getMint(connection, baseMint);
   const baseDecimals = baseMintAccount.decimals;
 
@@ -162,7 +162,7 @@ export async function createPermissionlessDlmmPool(
   console.log(`- Using activationPoint = ${activationPoint}`);
   console.log(`- Using hasAlphaVault = ${hasAlphaVault}`);
 
-  const quoteDecimals = getQuoteDecimals(config.quoteSymbol);
+  const quoteDecimals = await getQuoteDecimals(connection, config.quoteSymbol, config.quoteMint);
   const baseMintAccount = await getMint(connection, baseMint);
   const baseDecimals = baseMintAccount.decimals;
 
@@ -198,6 +198,7 @@ export async function createPermissionlessDlmmPool(
       programId: dlmmProgramId,
     },
   );
+
   modifyComputeUnitPriceIx(initPoolTx, config.computeUnitPriceMicroLamports);
 
   let poolKey: PublicKey;

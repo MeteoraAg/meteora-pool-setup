@@ -28,7 +28,7 @@ async function main() {
   const wallet = new Wallet(keypair);
 
   let baseMint: PublicKey;
-  let quoteMint = getQuoteMint(config.quoteSymbol);
+  let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint);
 
   // If we want to create a new token mint
   if (config.createBaseToken) {

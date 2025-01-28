@@ -9,7 +9,6 @@ import { DEFAULT_COMMITMENT_LEVEL, M3M3_PROGRAM_IDS } from "./libs/constants";
 import {
   safeParseKeypairFromFile,
   getQuoteMint,
-  getQuoteDecimals,
   runSimulateTransaction,
 } from "./libs/utils";
 import { createTokenMint } from "./libs/create_token_mint";
@@ -22,7 +21,6 @@ import AmmImpl from "@mercurial-finance/dynamic-amm-sdk";
 import StakeForFee, { deriveFeeVault } from "@meteora-ag/m3m3";
 import {
   create_m3m3_farm,
-  lockLiquidityToFeeVault,
 } from "./libs/create_m3m3_farm_utils";
 
 async function main() {
@@ -43,7 +41,7 @@ async function main() {
     throw new Error("Missing baseMint in configuration");
   }
   let baseMint = new PublicKey(config.baseMint);
-  let quoteMint = getQuoteMint(config.quoteSymbol);
+  let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint);
   const ammProgram = createProgram(connection).ammProgram;
   const poolKey = deriveCustomizablePermissionlessConstantProductPoolAddress(
     baseMint,

@@ -36,13 +36,17 @@ const DYNAMIC_AMM_PROGRAM_ID = new PublicKey(
 describe("Test Create Pool", () => {
   const WEN_DECIMALS = 5;
   const USDC_DECIMALS = 6;
+  const JUP_DECIMALS = 6;
   const WEN_SUPPLY = 100_000_000;
   const USDC_SUPPLY = 100_000_000;
+  const JUP_SUPPLY = 7_000_000_000;
 
   let WEN: PublicKey;
   let USDC: PublicKey;
+  let JUP: PublicKey;
   let userWEN: web3.PublicKey;
   let userUSDC: web3.PublicKey;
+  let userJUP: web3.PublicKey;
 
   beforeAll(async () => {
     WEN = await createMint(
@@ -62,6 +66,17 @@ describe("Test Create Pool", () => {
       payerKeypair.publicKey,
       null,
       USDC_DECIMALS,
+      Keypair.generate(),
+      undefined,
+      TOKEN_PROGRAM_ID,
+    );
+
+    JUP = await createMint(
+      connection,
+      payerKeypair,
+      payerKeypair.publicKey,
+      null,
+      JUP_DECIMALS,
       Keypair.generate(),
       undefined,
       TOKEN_PROGRAM_ID,
@@ -97,6 +112,21 @@ describe("Test Create Pool", () => {
     );
     userUSDC = userUsdcInfo.address;
 
+    const userJupInfo = await getOrCreateAssociatedTokenAccount(
+      connection,
+      payerKeypair,
+      JUP,
+      payerKeypair.publicKey,
+      false,
+      "confirmed",
+      {
+        commitment: "confirmed",
+      },
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+    );
+    userJUP = userJupInfo.address;
+
     await mintTo(
       connection,
       payerKeypair,
@@ -118,6 +148,20 @@ describe("Test Create Pool", () => {
       userUSDC,
       payerKeypair.publicKey,
       USDC_SUPPLY * 10 ** USDC_DECIMALS,
+      [],
+      {
+        commitment: "confirmed",
+      },
+      TOKEN_PROGRAM_ID,
+    );
+
+    await mintTo(
+      connection,
+      payerKeypair,
+      JUP,
+      userJUP,
+      payerKeypair.publicKey,
+      JUP_SUPPLY * 10 ** JUP_DECIMALS,
       [],
       {
         commitment: "confirmed",
@@ -191,6 +235,43 @@ describe("Test Create Pool", () => {
       payerWallet,
       WEN,
       USDC,
+      {
+        cluster: "localhost",
+        programId: DLMM_PROGRAM_ID,
+      },
+    );
+  });
+
+  it("Should be able to create DLMM pool without strict quote token", async () => {
+    const config: MeteoraConfig = {
+      dryRun: false,
+      rpcUrl,
+      keypairFilePath,
+      computeUnitPriceMicroLamports: 100000,
+      createBaseToken: null,
+      baseMint: WEN.toString(),
+      quoteMint: JUP.toString(),
+      dlmm: {
+        binStep: 200,
+        feeBps: 200,
+        initialPrice: 0.5,
+        activationType: "timestamp",
+        activationPoint: null,
+        priceRounding: "up",
+        hasAlphaVault: false,
+      },
+      dynamicAmm: null,
+      alphaVault: null,
+      lockLiquidity: null,
+      lfgSeedLiquidity: null,
+      singleBinSeedLiquidity: null,
+    };
+    await createPermissionlessDlmmPool(
+      config,
+      connection,
+      payerWallet,
+      WEN,
+      JUP,
       {
         cluster: "localhost",
         programId: DLMM_PROGRAM_ID,
