@@ -3,7 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [1.4.0] - 2025-01-27 - [PR #8](https://github.com/MeteoraAg/meteora-pool-setup/pull/20)
+## [1.4.1] - 2025-03-05 - [PR #21](https://github.com/MeteoraAg/meteora-pool-setup/pull/21)
+### Added 
+- Add field `creatorPoolOnOffControl` in DLMM configuration.
+
+### Changed
+
+## [1.4.0] - 2025-01-27 - [PR #20](https://github.com/MeteoraAg/meteora-pool-setup/pull/20)
 ### Added 
 - Add field `quoteMint` in configuration. 
 
@@ -11,7 +17,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Make field `quoteSymbol` to be optional in configuration.
 - 
 
-## [1.3.0] - 2025-01-21 - [PR #8](https://github.com/MeteoraAg/meteora-pool-setup/pull/13)
+## [1.3.0] - 2025-01-21 - [PR #13](https://github.com/MeteoraAg/meteora-pool-setup/pull/13)
 ### Added 
 - Script to create M3M3 fee farm.
 

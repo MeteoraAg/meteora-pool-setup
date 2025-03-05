@@ -12,6 +12,7 @@
     "activationType": "slot",
     "activationPoint": null,
     "priceRounding": "up",
-    "hasAlphaVault": false
+    "hasAlphaVault": false,
+    "creatorPoolOnOffControl": false
   }
 }

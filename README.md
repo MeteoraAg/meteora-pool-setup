@@ -47,6 +47,7 @@ Also we need to provide the keypair for the payer wallet in `keypair.json` file.
 - `activationPoint`: To activate pool trading at a point, either slot valut or timestamp value base on `activationType`.
 - `priceRounding`: Should be `up` or `down`.
 - `hasAlphaVault`: Whether alpha vault is enabled or not for this pool.
+- `creatorPoolOnOffControl`: Allow creator to turn on/off pool control.
 
 **NOTICE**: There is only one DLMM pool that can be created with the same base and quote tokens, using the instruction `initializeCustomizablePermissionlessLbPair`. So if users are using that instruction to create a new DLMM pool with the same base and quote tokens, but with different parameters, then the transaction will be failed.
 

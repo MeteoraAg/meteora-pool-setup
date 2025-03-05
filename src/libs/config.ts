@@ -105,6 +105,9 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
         hasAlphaVault: {
           type: "boolean",
         },
+        creatorPoolOnOffControl: {
+          type: "boolean",
+        },
       },
       required: [
         "binStep",
@@ -298,6 +301,8 @@ export interface DlmmConfig {
   activationPoint: number | null;
   priceRounding: PriceRoundingConfig;
   hasAlphaVault: boolean;
+  // Allow creator to turn on/off the pool
+  creatorPoolOnOffControl: boolean;
 }
 
 export interface FcfsAlphaVaultConfig {

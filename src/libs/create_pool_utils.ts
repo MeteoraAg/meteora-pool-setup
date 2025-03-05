@@ -154,13 +154,14 @@ export async function createPermissionlessDlmmPool(
     : null;
 
   const activationType = getDlmmActivationType(config.dlmm.activationType);
-
+  const creatorPoolOnOffControl = config.dlmm.creatorPoolOnOffControl;
   console.log(`- Using binStep = ${binStep}`);
   console.log(`- Using feeBps = ${feeBps}`);
   console.log(`- Using initialPrice = ${config.dlmm.initialPrice}`);
   console.log(`- Using activationType = ${config.dlmm.activationType}`);
   console.log(`- Using activationPoint = ${activationPoint}`);
   console.log(`- Using hasAlphaVault = ${hasAlphaVault}`);
+  console.log(`- Using creatorPoolOnOffControl = ${creatorPoolOnOffControl}`);
 
   const quoteDecimals = await getQuoteDecimals(connection, config.quoteSymbol, config.quoteMint);
   const baseMintAccount = await getMint(connection, baseMint);
@@ -193,6 +194,7 @@ export async function createPermissionlessDlmmPool(
     hasAlphaVault,
     wallet.publicKey,
     activationPoint,
+    creatorPoolOnOffControl,
     {
       cluster,
       programId: dlmmProgramId,
