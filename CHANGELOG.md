@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [1.4.1] - 2025-03-05 - [PR #21](https://github.com/MeteoraAg/meteora-pool-setup/pull/21)
+## [1.4.1] - 2025-03-05 - [PR #24](https://github.com/MeteoraAg/meteora-pool-setup/pull/24)
 ### Added 
 - Add field `creatorPoolOnOffControl` in DLMM configuration.
+- Add script `set_dlmm_pool_status`.
 
 ### Changed
 

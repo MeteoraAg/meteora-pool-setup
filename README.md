@@ -166,6 +166,11 @@ Create the M3M3 fee farm
 bun run src/create_m3m3_farm.ts --config ./config/create_m3m3_farm.json
 ```
 
+** Set DLMM pool status**
+```bash
+bun run src/set_dlmm_pool_status.ts --config ./config/set_dlmm_pool_status.json
+```
+
 ## After deployment
 To view pool on the UI, access the links below
 - For Dynamic AMM pool: `https://app.meteora.ag/pools/<POOL_ADDRESS>`

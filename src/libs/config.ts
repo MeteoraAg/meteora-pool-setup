@@ -250,7 +250,16 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
         }
       },
       required: ["topListLength", "unstakeLockDurationSecs", "secondsToFullUnlock", "startFeeDistributeTimestamp"],
-    }
+    },
+    setDlmmPoolStatus: {
+      type: "object",
+      nullable: true,
+      properties: {
+        poolMint: { type: "string" },
+        enabled: { type: "boolean" },
+      },
+      required: ["poolMint", "enabled"],
+    },
   },
   required: [
     "rpcUrl",
@@ -277,6 +286,7 @@ export interface MeteoraConfig {
   lfgSeedLiquidity: LfgSeedLiquidityConfig | null;
   singleBinSeedLiquidity: SingleBinSeedLiquidityConfig | null;
   m3m3: M3m3Config | null;
+  setDlmmPoolStatus: SetDlmmPoolStatusConfig | null;
 }
 
 export interface CreateBaseMintConfig {
@@ -380,6 +390,11 @@ export interface M3m3Config {
   unstakeLockDurationSecs: number;
   secondsToFullUnlock: number;
   startFeeDistributeTimestamp: number;
+}
+
+export interface SetDlmmPoolStatusConfig {
+  poolMint: string;
+  enabled: boolean;
 }
 
 export enum ActivationTypeConfig {
