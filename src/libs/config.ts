@@ -255,7 +255,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
       type: "object",
       nullable: true,
       properties: {
-        poolMint: { type: "string" },
+        poolAddress: { type: "string" },
         enabled: { type: "boolean" },
       },
       required: ["poolMint", "enabled"],
@@ -393,7 +393,7 @@ export interface M3m3Config {
 }
 
 export interface SetDlmmPoolStatusConfig {
-  poolMint: string;
+  poolAddress: string;
   enabled: boolean;
 }
 

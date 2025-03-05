@@ -24,13 +24,13 @@ async function main() {
   const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL);
   const wallet = new Wallet(keypair);
 
-  const poolMint = new PublicKey(config.setDlmmPoolStatus.poolMint);
+  const poolAddress = new PublicKey(config.setDlmmPoolStatus.poolAddress);
   const enabled = config.setDlmmPoolStatus.enabled;
 
-  console.log(`- Using pool mint ${poolMint.toString()}`);
+  console.log(`- Using pool address ${poolAddress.toString()}`);
   console.log(`- Using enabled ${enabled}`);
 
-  const lbPair = await DLMM.create(connection, poolMint);
+  const lbPair = await DLMM.create(connection, poolAddress);
 
   const tx = await lbPair.setPairStatusPermissionless(enabled, wallet.publicKey);
   modifyComputeUnitPriceIx(tx, config.computeUnitPriceMicroLamports);
