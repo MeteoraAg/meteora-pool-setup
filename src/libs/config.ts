@@ -258,7 +258,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
         poolAddress: { type: "string" },
         enabled: { type: "boolean" },
       },
-      required: ["poolMint", "enabled"],
+      required: ["poolAddress", "enabled"],
     },
   },
   required: [
