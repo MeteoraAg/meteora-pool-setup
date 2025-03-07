@@ -171,6 +171,11 @@ bun run src/create_m3m3_farm.ts --config ./config/create_m3m3_farm.json
 bun run src/set_dlmm_pool_status.ts --config ./config/set_dlmm_pool_status.json
 ```
 
+** Create alpha vault with Permission with authority whitelist mode**
+```bash
+bun run src/create_alpha_vault.ts --config ./config/create_dynamic_amm_pool_with_permissioned_authority_vault.json
+```
+
 ## After deployment
 To view pool on the UI, access the links below
 - For Dynamic AMM pool: `https://app.meteora.ag/pools/<POOL_ADDRESS>`

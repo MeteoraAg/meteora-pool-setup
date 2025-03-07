@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [1.4.2] - 2025-03-06 - [PR #1](https://github.com/MeteoraAg/meteora-pool-setup/pull/11)
+### Added 
+- Add whitelist mode `permissioned_with_authority` and `permissioned_with_merkle_proof` when creating alpha vault.
+
 ## [1.4.1] - 2025-03-05 - [PR #24](https://github.com/MeteoraAg/meteora-pool-setup/pull/24)
 ### Added 
 - Add field `creatorPoolOnOffControl` in DLMM configuration.
