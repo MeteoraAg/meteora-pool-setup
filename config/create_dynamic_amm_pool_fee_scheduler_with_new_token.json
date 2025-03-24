@@ -1,0 +1,43 @@
+{
+    "rpcUrl": "https://api.devnet.solana.com",
+    "dryRun": false,
+    "keypairFilePath": "id.json",
+    "computeUnitPriceMicroLamports": 400000,
+    "createBaseToken": null,
+    "baseMint": "49H1tbmgRzR5kLQ2YTWUESAR3Du3sPyLgsGJnJZ6EM8o",
+    "quoteMint": "4eQ3PiW2n3bhKEopYDBe2pVxd66MjwowXzbFWYq95pZv",
+    "dynamicAmm": {
+      "baseAmount": "100000",
+      "quoteAmount": "100000",
+      "tradeFeeNumerator": 15000,
+      "activationType": "timestamp",
+      "activationPoint": null,
+      "hasAlphaVault": false,
+      "feeCurvePoints":  [
+        {
+          "feeBps": 1300,
+          "activatedDuration": 120
+        },
+        {
+          "feeBps": 1100,
+          "activatedDuration": 240
+        },
+        {
+          "feeBps": 900,
+          "activatedDuration": 360
+        },
+        {
+          "feeBps": 700,
+          "activatedDuration": 540
+        },
+        {
+          "feeBps": 500,
+          "activatedDuration": 600
+        },
+        {
+          "feeBps": 400,
+          "activatedDuration": 720
+        }
+      ]
+    }
+  }
