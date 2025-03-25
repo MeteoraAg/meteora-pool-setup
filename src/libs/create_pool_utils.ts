@@ -72,7 +72,6 @@ export async function createPermissionlessDynamicPool(
 	const activationType = getDynamicAmmActivationType(
 		config.dynamicAmm.activationType
 	)
-	console.log("Fee curve: ", config.dynamicAmm.feeCurvePoints)
 	const customizeParam: CustomizableParams = {
 		tradeFeeNumerator: config.dynamicAmm.tradeFeeNumerator,
 		activationType: activationType,
@@ -89,6 +88,7 @@ export async function createPermissionlessDynamicPool(
 	console.log(`- Using activationType = ${config.dynamicAmm.activationType}`)
 	console.log(`- Using activationPoint = ${customizeParam.activationPoint}`)
 	console.log(`- Using hasAlphaVault = ${customizeParam.hasAlphaVault}`)
+	console.log(`- Using fee Curve = ${config.dynamicAmm.feeCurvePoints}`)
 
 	const initPoolTx =
 		await AmmImpl.createCustomizablePermissionlessConstantProductPool(
@@ -106,7 +106,7 @@ export async function createPermissionlessDynamicPool(
 		)
 	initPoolTx.add(
 		ComputeBudgetProgram.setComputeUnitLimit({
-			units: 400_000
+			units: 800_000
 		})
 	)
 	modifyComputeUnitPriceIx(initPoolTx, config.computeUnitPriceMicroLamports)

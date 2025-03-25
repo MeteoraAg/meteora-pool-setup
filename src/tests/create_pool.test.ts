@@ -38,27 +38,27 @@ const DYNAMIC_AMM_PROGRAM_ID = new PublicKey(DYNAMIC_AMM_PROGRAM_IDS["localhost"
 export const FEE_CURVE_POINTS: FeeCurvePoints = [
 	{
 		feeBps: 1300,
-		activatedDuration: 60 // 1min
+		activatedDuration: 120
 	},
 	{
 		feeBps: 1100,
-		activatedDuration: 2 * 60
+		activatedDuration: 240
 	},
 	{
 		feeBps: 900,
-		activatedDuration: 3 * 60
+		activatedDuration: 360
 	},
 	{
 		feeBps: 700,
-		activatedDuration: 4 * 60
+		activatedDuration: 540
 	},
 	{
 		feeBps: 500,
-		activatedDuration: 5 * 60
+		activatedDuration: 600
 	},
 	{
 		feeBps: 400,
-		activatedDuration: 6 * 60
+		activatedDuration: 720
 	}
 ]
 
@@ -199,7 +199,7 @@ describe("Test Create Pool", () => {
 		)
 	})
 
-	it("Should able to create Basic Dynamic AMM pool ", async () => {
+	it("Should able to create Basic Dynamic AMM pool with fee curve", async () => {
 		const config: MeteoraConfig = {
 			dryRun: false,
 			rpcUrl,
@@ -211,11 +211,11 @@ describe("Test Create Pool", () => {
 			dynamicAmm: {
 				baseAmount: 1000,
 				quoteAmount: 0.1,
-				tradeFeeNumerator: 2500,
+				tradeFeeNumerator: 15000,
 				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
 				hasAlphaVault: false,
-				feeCurvePoints: FeeCurveInfo.flat(FEE_CURVE_POINTS)
+				feeCurvePoints: FEE_CURVE_POINTS
 			},
 			dlmm: null,
 			alphaVault: null,
@@ -244,7 +244,7 @@ describe("Test Create Pool", () => {
 			keypairFilePath,
 			computeUnitPriceMicroLamports: 100000,
 			createBaseToken: null,
-			baseMint: WEN.toString(),
+			baseMint: JUP.toString(),
 			quoteSymbol: "SOL",
 			dynamicAmm: {
 				baseAmount: 1000,
@@ -267,7 +267,7 @@ describe("Test Create Pool", () => {
 			config,
 			connection,
 			payerWallet,
-			WEN,
+			JUP,
 			new PublicKey(SOL_TOKEN_MINT),
 			{
 				programId: DYNAMIC_AMM_PROGRAM_ID
