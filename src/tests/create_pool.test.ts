@@ -253,7 +253,7 @@ describe("Test Create Pool", () => {
 				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
 				hasAlphaVault: false,
-				feeCurvePoints: FeeCurveInfo.none
+				feeCurvePoints: null
 			},
 			dlmm: null,
 			alphaVault: null,
