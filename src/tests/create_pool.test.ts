@@ -199,7 +199,7 @@ describe("Test Create Pool", () => {
 		)
 	})
 
-	it("Should able to create Basic Dynamic AMM pool", async () => {
+	it("Should able to create Basic Dynamic AMM pool ", async () => {
 		const config: MeteoraConfig = {
 			dryRun: false,
 			rpcUrl,
@@ -216,6 +216,44 @@ describe("Test Create Pool", () => {
 				activationPoint: null,
 				hasAlphaVault: false,
 				feeCurvePoints: FeeCurveInfo.flat(FEE_CURVE_POINTS)
+			},
+			dlmm: null,
+			alphaVault: null,
+			lockLiquidity: null,
+			lfgSeedLiquidity: null,
+			singleBinSeedLiquidity: null,
+			m3m3: null,
+			setDlmmPoolStatus: null
+		}
+		await createPermissionlessDynamicPool(
+			config,
+			connection,
+			payerWallet,
+			WEN,
+			new PublicKey(SOL_TOKEN_MINT),
+			{
+				programId: DYNAMIC_AMM_PROGRAM_ID
+			}
+		)
+	})
+
+	it("Should able to create Basic Dynamic AMM pool without fee curve", async () => {
+		const config: MeteoraConfig = {
+			dryRun: false,
+			rpcUrl,
+			keypairFilePath,
+			computeUnitPriceMicroLamports: 100000,
+			createBaseToken: null,
+			baseMint: WEN.toString(),
+			quoteSymbol: "SOL",
+			dynamicAmm: {
+				baseAmount: 1000,
+				quoteAmount: 0.1,
+				tradeFeeNumerator: 2500,
+				activationType: ActivationTypeConfig.Timestamp,
+				activationPoint: null,
+				hasAlphaVault: false,
+				feeCurvePoints: FeeCurveInfo.none
 			},
 			dlmm: null,
 			alphaVault: null,
