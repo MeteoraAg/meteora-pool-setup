@@ -80,7 +80,9 @@ export async function createPermissionlessDynamicPool(
 			? new BN(config.dynamicAmm.activationPoint)
 			: null,
 		hasAlphaVault: config.dynamicAmm.hasAlphaVault,
-		feeCurve: FeeCurveInfo.flat(config.dynamicAmm.feeCurvePoints),
+		feeCurve: config.dynamicAmm.feeCurvePoints
+			? FeeCurveInfo.flat(config.dynamicAmm.feeCurvePoints)
+			: FeeCurveInfo.none,
 		padding: Array(90).fill(0)
 	}
 	console.log(`- Using tradeFeeNumerator = ${customizeParam.tradeFeeNumerator}`)
