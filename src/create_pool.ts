@@ -50,6 +50,9 @@ async function main() {
 
 	/// --------------------------------------------------------------------------
 	if (config.dynamicAmm && !config.dlmm) {
+		if (!config.dynamicAmm.feeCurvePoints) {
+			throw new Error("Missing fee curve points in configuration")
+		}
 		await createPermissionlessDynamicPool(
 			config,
 			connection,

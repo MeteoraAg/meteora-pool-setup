@@ -253,13 +253,16 @@ describe("Test Create Pool", () => {
 				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
 				priceRounding: PriceRoundingConfig.Up,
-				hasAlphaVault: false
+				hasAlphaVault: false,
+				creatorPoolOnOffControl: false
 			},
 			dynamicAmm: null,
 			alphaVault: null,
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			m3m3: null,
+			setDlmmPoolStatus: null
 		}
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, USDC, {
 			cluster: "localhost",
@@ -280,16 +283,19 @@ describe("Test Create Pool", () => {
 				binStep: 200,
 				feeBps: 200,
 				initialPrice: 0.5,
-				activationType: "timestamp",
+				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
-				priceRounding: "up",
-				hasAlphaVault: false
+				priceRounding: PriceRoundingConfig.Up,
+				hasAlphaVault: false,
+				creatorPoolOnOffControl: false
 			},
 			dynamicAmm: null,
 			alphaVault: null,
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			m3m3: null,
+			setDlmmPoolStatus: null
 		}
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, JUP, {
 			cluster: "localhost",

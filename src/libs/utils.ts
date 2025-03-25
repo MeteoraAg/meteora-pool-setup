@@ -366,7 +366,6 @@ export const modifyComputeUnitPriceIx = (
 				}
 			}
 		}
-		console.log({ newPriorityFee })
 		// inject if none
 		tx.add(
 			ComputeBudgetProgram.setComputeUnitPrice({
