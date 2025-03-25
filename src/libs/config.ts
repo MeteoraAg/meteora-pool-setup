@@ -75,6 +75,18 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 				},
 				feeCurvePoints: {
 					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							feeBps: {
+								type: "number"
+							},
+							activatedDuration: {
+								type: "number"
+							}
+						},
+						required: ["feeBps", "activatedDuration"]
+					},
 					nullable: true
 				}
 			},
