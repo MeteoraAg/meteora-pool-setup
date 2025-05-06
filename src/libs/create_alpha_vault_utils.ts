@@ -126,14 +126,28 @@ export async function createFcfsAlphaVault(
 		])
 	} else {
 		console.log(`>> Sending init alpha vault transaction...`)
-		const initAlphaVaulTxHash = await sendAndConfirmTransaction(
-			connection,
-			initAlphaVaultTx,
-			[wallet.payer]
-		).catch((err) => {
-			console.error(err)
-			throw err
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		initAlphaVaultTx.recentBlockhash = latestBlockHash.blockhash
+		initAlphaVaultTx.sign(wallet.payer)
+
+		const initAlphaVaulTxHash = await connection.sendRawTransaction(
+			initAlphaVaultTx.serialize()
+		)
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: initAlphaVaulTxHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(
 			`>>> Alpha vault initialized successfully with tx hash: ${initAlphaVaulTxHash}`
 		)
@@ -222,14 +236,29 @@ export async function createProrataAlphaVault(
 		])
 	} else {
 		console.log(`>> Sending init alpha vault transaction...`)
-		const initAlphaVaulTxHash = await sendAndConfirmTransaction(
-			connection,
-			initAlphaVaultTx,
-			[wallet.payer]
-		).catch((err) => {
-			console.error(err)
-			throw err
-		})
+
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		initAlphaVaultTx.recentBlockhash = latestBlockHash.blockhash
+		initAlphaVaultTx.sign(wallet.payer)
+
+		const initAlphaVaulTxHash = await connection.sendRawTransaction(
+			initAlphaVaultTx.serialize()
+		)
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: initAlphaVaulTxHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(
 			`>>> Alpha vault initialized successfully with tx hash: ${initAlphaVaulTxHash}`
 		)

@@ -71,12 +71,26 @@ export async function create_m3m3_farm(
 		await runSimulateTransaction(connection, [payer], payer.publicKey, [createTx])
 	} else {
 		console.log(`>> Sending create m3m3 farm transaction...`)
-		const txHash = await sendAndConfirmTransaction(connection, createTx, [
-			payer
-		]).catch((err) => {
-			console.error(err)
-			throw err
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		createTx.recentBlockhash = latestBlockHash.blockhash
+		createTx.sign(payer)
+
+		const txHash = await connection.sendRawTransaction(createTx.serialize())
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: txHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> M3M3 farm initialized successfully with tx hash: ${txHash}`)
 	}
 }

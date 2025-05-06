@@ -111,12 +111,28 @@ export async function createPermissionlessDynamicPool(
 		])
 	} else {
 		console.log(`>> Sending init pool transaction...`)
-		const initPoolTxHash = await sendAndConfirmTransaction(connection, initPoolTx, [
-			wallet.payer
-		]).catch((err) => {
-			console.error(err)
-			throw err
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		initPoolTx.recentBlockhash = latestBlockHash.blockhash
+		initPoolTx.sign(wallet.payer)
+
+		const initPoolTxHash = await connection.sendRawTransaction(
+			initPoolTx.serialize()
+		)
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: initPoolTxHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> Pool initialized successfully with tx hash: ${initPoolTxHash}`)
 	}
 }
@@ -218,12 +234,28 @@ export async function createPermissionlessDlmmPool(
 		])
 	} else {
 		console.log(`>> Sending init pool transaction...`)
-		let initPoolTxHash = await sendAndConfirmTransaction(connection, initPoolTx, [
-			wallet.payer
-		]).catch((e) => {
-			console.error(e)
-			throw e
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		initPoolTx.recentBlockhash = latestBlockHash.blockhash
+		initPoolTx.sign(wallet.payer)
+
+		const initPoolTxHash = await connection.sendRawTransaction(
+			initPoolTx.serialize()
+		)
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: initPoolTxHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> Pool initialized successfully with tx hash: ${initPoolTxHash}`)
 	}
 }

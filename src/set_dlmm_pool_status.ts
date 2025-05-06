@@ -40,12 +40,26 @@ async function main() {
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [tx])
 	} else {
 		console.log(`>> Sending set DLMM pool status transaction...`)
-		let txHash = await sendAndConfirmTransaction(connection, tx, [
-			wallet.payer
-		]).catch((e) => {
-			console.error(e)
-			throw e
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		tx.recentBlockhash = latestBlockHash.blockhash
+		tx.sign(wallet.payer)
+
+		const txHash = await connection.sendRawTransaction(tx.serialize())
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: txHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> Set DLMM pool status tx hash: ${txHash}`)
 	}
 }

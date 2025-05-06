@@ -95,12 +95,26 @@ async function main() {
 				`\n> Simulating lock liquidty tx for address ${allocation.address} with amount = ${allocation.amount}... / percentage = ${allocation.percentage}`
 			)
 		} else {
-			const txHash = await sendAndConfirmTransaction(connection, tx, [
-				wallet.payer
-			]).catch((err) => {
-				console.error(err)
-				throw err
-			})
+			const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+			tx.recentBlockhash = latestBlockHash.blockhash
+			tx.sign(wallet.payer)
+
+			const txHash = await connection.sendRawTransaction(tx.serialize())
+
+			await connection
+				.confirmTransaction(
+					{
+						blockhash: latestBlockHash.blockhash,
+						lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+						signature: txHash
+					},
+					"confirmed"
+				)
+				.catch((err) => {
+					console.error(err)
+					throw err
+				})
 
 			console.log(
 				`>>> Lock liquidity successfully with tx hash: ${txHash} for address ${allocation.address} with amount ${allocation.amount}`

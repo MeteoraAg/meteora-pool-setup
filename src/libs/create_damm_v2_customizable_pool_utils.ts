@@ -1,10 +1,4 @@
-import {
-	Cluster,
-	Connection,
-	Keypair,
-	PublicKey,
-	sendAndConfirmTransaction
-} from "@solana/web3.js"
+import { Cluster, Connection, Keypair, PublicKey } from "@solana/web3.js"
 import {
 	MeteoraConfig,
 	getAmountInLamports,
@@ -212,14 +206,29 @@ export async function createDammV2CustomizablePool(
 		)
 	} else {
 		console.log(`>> Sending init pool transaction...`)
-		const initPoolTxHash = await sendAndConfirmTransaction(
-			connection,
-			initCustomizePoolTx,
-			[wallet.payer, positionNft]
-		).catch((err) => {
-			console.error(err)
-			throw err
-		})
+
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		initCustomizePoolTx.recentBlockhash = latestBlockHash.blockhash
+		initCustomizePoolTx.sign(...[wallet.payer, positionNft])
+
+		const initPoolTxHash = await connection.sendRawTransaction(
+			initCustomizePoolTx.serialize()
+		)
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: initPoolTxHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> Pool initialized successfully with tx hash: ${initPoolTxHash}`)
 	}
 }

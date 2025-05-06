@@ -104,14 +104,26 @@ export async function seedLiquiditySingleBin(
 		)
 	} else {
 		console.log(`>> Sending seedLiquiditySingleBin transaction...`)
-		const txHash = await sendAndConfirmTransaction(connection, tx, [
-			payerKeypair,
-			baseKeypair,
-			operatorKeypair
-		]).catch((err) => {
-			console.error(err)
-			throw err
-		})
+		const latestBlockHash = await connection.getLatestBlockhash("confirmed")
+
+		tx.recentBlockhash = latestBlockHash.blockhash
+		tx.sign(...[payerKeypair, baseKeypair, operatorKeypair])
+
+		const txHash = await connection.sendRawTransaction(tx.serialize())
+
+		await connection
+			.confirmTransaction(
+				{
+					blockhash: latestBlockHash.blockhash,
+					lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+					signature: txHash
+				},
+				"confirmed"
+			)
+			.catch((err) => {
+				console.error(err)
+				throw err
+			})
 		console.log(`>>> SeedLiquiditySingleBin successfully with tx hash: ${txHash}`)
 	}
 }
