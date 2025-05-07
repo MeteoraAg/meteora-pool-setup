@@ -160,7 +160,7 @@ bun run src/create_pool.ts --config ./config/create_dynamic_amm_pool.json
 
 **Create customizable dynamic AMM V2 pool**
 ```bash
-bun run src/create_damm_v2_customizable_pool.ts --config ./config/create_damm_v2_customize_pool.json
+bun run src/create_damm_v2_customizable_pool.ts --config ./config/create_damm_v2_customize_pool_default_dynamic_fee.json
 ```
 
 **Create dynamic AMM pool with new token mint**
