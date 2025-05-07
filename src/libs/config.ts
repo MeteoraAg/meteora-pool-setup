@@ -15,6 +15,9 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 		dryRun: {
 			type: "boolean"
 		},
+		keyPath: {
+			type: "string"
+		},
 		keypairFilePath: {
 			type: "string"
 		},
@@ -30,6 +33,12 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 				},
 				baseDecimals: {
 					type: "number"
+				},
+				name: {
+					type: "string"
+				},
+				symbol: {
+					type: "string"
 				}
 			},
 			required: ["mintBaseTokenAmount", "baseDecimals"],
@@ -351,6 +360,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 }
 
 export interface MeteoraConfig {
+	keyPath: string
 	rpcUrl: string
 	dryRun: boolean
 	keypairFilePath: string
@@ -371,6 +381,8 @@ export interface MeteoraConfig {
 }
 
 export interface CreateBaseMintConfig {
+	symbol: string
+	name: string
 	mintBaseTokenAmount: number | string
 	baseDecimals: number
 }

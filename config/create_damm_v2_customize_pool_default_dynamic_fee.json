@@ -1,14 +1,14 @@
 {
-    "rpcUrl": "https://api.devnet.solana.com",
-    "dryRun": true,
-    "keypairFilePath": "id.json",
+    "rpcUrl": "",
+    "dryRun": false,
+    "keypairFilePath": "./config/keypair.json",
+    "keyPath": "./config/key.json",
     "computeUnitPriceMicroLamports": 100000,
-    "baseMint": "D1vjvCfzFATa7SQJenriTwYZYamaLL6vsasv2DabYxaz",
     "quoteSymbol": "SOL",
     "dynamicAmmV2": {
         "creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",
-        "baseAmount": 1000,
-        "initPrice": 10,
+        "baseAmount": 1000000000,
+        "initPrice": 0.0001,
         "maxPrice": null,
         "poolFees": {
             "maxBaseFeeBps": 400,
@@ -23,5 +23,11 @@
         "collectFeeMode": 0,
         "activationType": "timestamp",
         "activationPoint": null
+    },
+    "createBaseToken": {
+        "mintBaseTokenAmount": 1000000000,
+        "baseDecimals": 9,
+        "name": "Test Coin",
+        "symbol": "TST"
     }
   }
