@@ -3,9 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.INFO
 
+## [1.4.6] - 2025-05-08 - [PR #41](https://github.com/MeteoraAg/meteora-pool-setup/pull/12)
+### Fixed
+- Fix wrong position owner passed in `seedLiquidityLfg` function.
+
 ## [1.4.5] - 2025-05-08 - [PR #12](https://github.com/MeteoraAg/meteora-pool-setup/pull/12)
 ### Added
-- Function to create alpha vault with permissioned with merkle proof whitelist mode. 
+- Function to create alpha vault with permissioned with merkle proof whitelist mode.
 
 ## [1.4.4] - 2025-05-06 - [PR #37](https://github.com/MeteoraAg/meteora-pool-setup/pull/37)
 ### Added 
