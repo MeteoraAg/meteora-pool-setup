@@ -230,11 +230,11 @@ describe("Test Seed Liquidity LFG", () => {
 			}
 		)
 
-		// WEN balance after = WEN supply - seed amount
+		// WEN balance after = WEN supply - seed amount - 1 lamport
 		const wenBalanceAfter = await getTokenBalance(connection, userWEN)
-		const expectedBalanceAfter = new BN(WEN_SUPPLY * 10 ** WEN_DECIMALS).sub(
-			seedAmount
-		)
+		const expectedBalanceAfter = new BN(WEN_SUPPLY * 10 ** WEN_DECIMALS)
+			.sub(seedAmount)
+			.sub(new BN(1))
 		expect(wenBalanceAfter.toString()).toEqual(expectedBalanceAfter.toString())
 
 		const pair = await DLMM.create(connection, poolKey, {

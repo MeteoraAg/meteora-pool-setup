@@ -186,7 +186,8 @@ export async function seedLiquidityLfg(
 		payerKeypair.publicKey,
 		feeOwner,
 		operatorKeypair.publicKey,
-		lockReleasePoint
+		lockReleasePoint,
+		seedTokenXToPositionOwner
 	)
 
 	if (sendPositionOwnerTokenProveIxs.length > 0) {
