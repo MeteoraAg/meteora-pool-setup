@@ -43,11 +43,11 @@ export async function seedLiquiditySingleBin(
 	const dlmmProgramId = opts?.programId ?? new PublicKey(DLMM_PROGRAM_IDS[cluster])
 
 	let poolKey: PublicKey
-	;[poolKey] = deriveCustomizablePermissionlessLbPair(
-		baseMint,
-		quoteMint,
-		dlmmProgramId
-	)
+		;[poolKey] = deriveCustomizablePermissionlessLbPair(
+			baseMint,
+			quoteMint,
+			dlmmProgramId
+		)
 	console.log(`- Using pool key ${poolKey.toString()}`)
 
 	console.log(`- Using seedAmount in lamports = ${seedAmount}`)
@@ -147,11 +147,11 @@ export async function seedLiquidityLfg(
 	const dlmmProgramId = opts?.programId ?? new PublicKey(DLMM_PROGRAM_IDS[cluster])
 
 	let poolKey: PublicKey
-	;[poolKey] = deriveCustomizablePermissionlessLbPair(
-		baseMint,
-		quoteMint,
-		dlmmProgramId
-	)
+		;[poolKey] = deriveCustomizablePermissionlessLbPair(
+			baseMint,
+			quoteMint,
+			dlmmProgramId
+		)
 	console.log(`- Using pool key ${poolKey.toString()}`)
 
 	console.log(`- Using seedAmount in lamports = ${seedAmount}`)
@@ -177,7 +177,7 @@ export async function seedLiquidityLfg(
 		initializeBinArraysAndPositionIxs,
 		addLiquidityIxs
 	} = await dlmmInstance.seedLiquidity(
-		payerKeypair.publicKey,
+		positionOwner,
 		seedAmount,
 		curvature,
 		minPricePerLamport,
