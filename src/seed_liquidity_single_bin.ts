@@ -28,7 +28,6 @@ async function main() {
 	console.log(`- Using payer ${keypair.publicKey} to execute commands`)
 
 	const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL)
-	const wallet = new Wallet(keypair)
 	const DLMM_PROGRAM_ID = new PublicKey(LBCLMM_PROGRAM_IDS["mainnet-beta"])
 
 	if (!config.baseMint) {
@@ -56,10 +55,6 @@ async function main() {
 		throw new Error(`Missing DLMM Single bin seed liquidity in configuration`)
 	}
 
-	const pair = await DLMM.create(connection, poolKey, {
-		cluster: "mainnet-beta"
-	})
-
 	const seedAmount = getAmountInLamports(
 		config.singleBinSeedLiquidity.seedAmount,
 		baseDecimals
@@ -74,11 +69,9 @@ async function main() {
 	const operatorKeypair = safeParseKeypairFromFile(
 		config.singleBinSeedLiquidity.operatorKeypairFilepath
 	)
-	const basePublickey = baseKeypair.publicKey
 	const price = config.singleBinSeedLiquidity.price
 	const positionOwner = new PublicKey(config.singleBinSeedLiquidity.positionOwner)
 	const feeOwner = new PublicKey(config.singleBinSeedLiquidity.feeOwner)
-	const operator = operatorKeypair.publicKey
 	const lockReleasePoint = new BN(config.singleBinSeedLiquidity.lockReleasePoint)
 	const seedTokenXToPositionOwner =
 		config.singleBinSeedLiquidity.seedTokenXToPositionOwner

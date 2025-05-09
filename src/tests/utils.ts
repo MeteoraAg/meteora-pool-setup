@@ -19,11 +19,8 @@ import {
 	SystemProgram,
 	Transaction
 } from "@solana/web3.js"
-import { BN } from "bn.js"
-import {
-	DEFAULT_COMMITMENT_LEVEL,
-	DEFAULT_SEND_TX_MAX_RETRIES
-} from "../libs/constants"
+import BN from "bn.js"
+import { DEFAULT_SEND_TX_MAX_RETRIES } from "../libs/constants"
 
 export const wrapSol = async (connection: Connection, amount: BN, user: Keypair) => {
 	const userAta = getAssociatedTokenAccount(NATIVE_MINT, user.publicKey)
@@ -141,7 +138,7 @@ export async function mintToToken2022(
 		mint,
 		destination.address,
 		mintAuthority.publicKey,
-		rawAmount,
+		BigInt(rawAmount.toString()),
 		[],
 		TOKEN_2022_PROGRAM_ID
 	)

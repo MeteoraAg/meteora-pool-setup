@@ -1,20 +1,4 @@
-import { Connection, Keypair, PublicKey } from "@solana/web3.js"
-import fs from "fs"
-import {
-	DLMM_PROGRAM_IDS,
-	DYNAMIC_AMM_PROGRAM_IDS,
-	SOL_TOKEN_MINT
-} from "../libs/constants"
-import {
-	createPermissionlessDlmmPool,
-	createPermissionlessDynamicPool
-} from "../index"
 import { Wallet, web3 } from "@coral-xyz/anchor"
-import {
-	ActivationTypeConfig,
-	MeteoraConfig,
-	PriceRoundingConfig
-} from "../libs/config"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -22,6 +6,22 @@ import {
 	getOrCreateAssociatedTokenAccount,
 	mintTo
 } from "@solana/spl-token"
+import { Connection, Keypair, PublicKey } from "@solana/web3.js"
+import fs from "fs"
+import {
+	createPermissionlessDlmmPool,
+	createPermissionlessDynamicPool
+} from "../index"
+import {
+	ActivationTypeConfig,
+	MeteoraConfig,
+	PriceRoundingConfig
+} from "../libs/config"
+import {
+	DLMM_PROGRAM_IDS,
+	DYNAMIC_AMM_PROGRAM_IDS,
+	SOL_TOKEN_MINT
+} from "../libs/constants"
 
 const keypairFilePath =
 	"./src/tests/keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json"
@@ -191,7 +191,10 @@ describe("Test Create Pool", () => {
 			alphaVault: null,
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			dynamicAmmV2: null,
+			setDlmmPoolStatus: null,
+			m3m3: null
 		}
 		await createPermissionlessDynamicPool(
 			config,
@@ -221,13 +224,17 @@ describe("Test Create Pool", () => {
 				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
 				priceRounding: PriceRoundingConfig.Up,
-				hasAlphaVault: false
+				hasAlphaVault: false,
+				creatorPoolOnOffControl: false
 			},
 			dynamicAmm: null,
 			alphaVault: null,
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null,
+			m3m3: null
 		}
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, USDC, {
 			cluster: "localhost",
@@ -248,16 +255,20 @@ describe("Test Create Pool", () => {
 				binStep: 200,
 				feeBps: 200,
 				initialPrice: 0.5,
-				activationType: "timestamp",
+				activationType: ActivationTypeConfig.Timestamp,
 				activationPoint: null,
-				priceRounding: "up",
-				hasAlphaVault: false
+				priceRounding: PriceRoundingConfig.Up,
+				hasAlphaVault: false,
+				creatorPoolOnOffControl: false
 			},
 			dynamicAmm: null,
 			alphaVault: null,
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			dynamicAmmV2: null,
+			setDlmmPoolStatus: null,
+			m3m3: null
 		}
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, JUP, {
 			cluster: "localhost",

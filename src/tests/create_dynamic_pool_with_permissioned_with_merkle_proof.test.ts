@@ -1,14 +1,6 @@
-import { Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js"
-import { SOL_TOKEN_MINT } from "../libs/constants"
-import { createPermissionlessDynamicPool, toAlphaVaulSdkPoolType } from "../index"
 import { web3 } from "@coral-xyz/anchor"
-import {
-	ActivationTypeConfig,
-	AlphaVaultTypeConfig,
-	MeteoraConfig,
-	PoolTypeConfig,
-	WhitelistModeConfig
-} from "../libs/config"
+import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+import AlphaVault, { PermissionWithMerkleProof } from "@meteora-ag/alpha-vault"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -16,25 +8,32 @@ import {
 	getOrCreateAssociatedTokenAccount,
 	mintTo
 } from "@solana/spl-token"
+import { Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js"
+import { BN } from "bn.js"
+import { createPermissionlessDynamicPool, toAlphaVaulSdkPoolType } from "../index"
 import {
-	connection,
-	payerKeypair,
-	rpcUrl,
-	keypairFilePath,
-	payerWallet,
-	DYNAMIC_AMM_PROGRAM_ID,
-	ALPHA_VAULT_PROGRAM_ID
-} from "./setup"
-import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+	ActivationTypeConfig,
+	AlphaVaultTypeConfig,
+	MeteoraConfig,
+	PoolTypeConfig,
+	WhitelistModeConfig
+} from "../libs/config"
+import { SOL_TOKEN_MINT } from "../libs/constants"
 import {
-	createAlphaVaultInstance,
 	createPermissionedAlphaVaultWithMerkleProof,
 	deriveAlphaVault,
 	deriveMerkleRootConfig
 } from "../libs/create_alpha_vault_utils"
-import { BN } from "bn.js"
-import { PermissionWithMerkleProof } from "@meteora-ag/alpha-vault"
 import { createMerkleTree } from "../libs/merkle_tree"
+import {
+	ALPHA_VAULT_PROGRAM_ID,
+	DYNAMIC_AMM_PROGRAM_ID,
+	connection,
+	keypairFilePath,
+	payerKeypair,
+	payerWallet,
+	rpcUrl
+} from "./setup"
 
 describe("Test create dynamic pool with permissioned with merkle proof fcfs alpha vault", () => {
 	const WEN_DECIMALS = 5
@@ -167,12 +166,14 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 				maxDepositCap: 5,
 				individualDepositingCap: 0.01,
 				escrowFee: 0,
-				whitelistMode: WhitelistModeConfig.PermissionedWithMerkleProof,
-				exportKvProof: false
+				whitelistMode: WhitelistModeConfig.PermissionedWithMerkleProof
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			dynamicAmmV2: null,
+			setDlmmPoolStatus: null,
+			m3m3: null
 		}
 
 		// 1. Create pool
@@ -241,11 +242,10 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 			ALPHA_VAULT_PROGRAM_ID
 		)
 
-		const alphaVault = await createAlphaVaultInstance(
-			connection,
-			ALPHA_VAULT_PROGRAM_ID,
-			alphaVaultPubkey
-		)
+		// @ts-expect-error: Connection version difference
+		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
+			cluster: "localhost"
+		})
 
 		expect(alphaVault.vault.whitelistMode).toEqual(PermissionWithMerkleProof)
 
@@ -279,7 +279,8 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 				depositProof
 			)
 
-			const depositTxHash = await sendAndConfirmTransaction(connection, depositTx, [
+			// @ts-expect-error: Transaction version difference
+			await sendAndConfirmTransaction(connection, depositTx, [
 				whitelistWallet_1
 			]).catch((e) => {
 				console.error(e)
@@ -302,7 +303,8 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 				depositProof
 			)
 
-			const depositTxHash = await sendAndConfirmTransaction(connection, depositTx, [
+			// @ts-expect-error: Transaction version difference
+			await sendAndConfirmTransaction(connection, depositTx, [
 				whitelistWallet_1
 			]).catch((e) => {
 				console.error(e)
@@ -313,7 +315,7 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 				whitelistWallet_1.publicKey
 			)
 			expect(whitelistWalletEscrow_1.totalDeposit.toString()).toEqual(
-				(depositAmount * 2).toString()
+				depositAmount.muln(2).toString()
 			)
 		}
 
@@ -327,6 +329,7 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 			)
 
 			await expect(
+				// @ts-expect-error: Transaction version difference
 				sendAndConfirmTransaction(connection, depositTx, [whitelistWallet_1])
 			).rejects.toThrow()
 		}

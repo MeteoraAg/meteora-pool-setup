@@ -97,6 +97,7 @@ async function main() {
 		throw new Error(`Missing DLMM LFG seed liquidity in configuration`)
 	}
 
+	// @ts-expect-error: Connection version difference
 	const pair = await DLMM.create(connection, poolKey, {
 		cluster: "mainnet-beta"
 	})
@@ -117,7 +118,6 @@ async function main() {
 	)
 	const positionOwner = new PublicKey(config.lfgSeedLiquidity.positionOwner)
 	const feeOwner = new PublicKey(config.lfgSeedLiquidity.feeOwner)
-	const operator = operatorKeypair.publicKey
 	const lockReleasePoint = new BN(config.lfgSeedLiquidity.lockReleasePoint)
 	const seedTokenXToPositionOwner = config.lfgSeedLiquidity.seedTokenXToPositionOwner
 
@@ -143,8 +143,8 @@ async function main() {
 		quoteMint,
 		seedAmount,
 		curvature,
-		minPricePerLamport,
-		maxPricePerLamport,
+		Number(minPricePerLamport),
+		Number(maxPricePerLamport),
 		lockReleasePoint,
 		seedTokenXToPositionOwner,
 		config.dryRun,

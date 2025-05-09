@@ -1,10 +1,9 @@
-import { CollectFeeMode, FeeSchedulerMode } from "@meteora-ag/cp-amm-sdk"
+import Ajv, { JSONSchemaType } from "ajv"
 import {
 	extraConfigValidation,
 	parseCliArguments,
 	safeParseJsonFromFile
 } from "./utils"
-import Ajv, { JSONSchemaType } from "ajv"
 
 const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 	type: "object",

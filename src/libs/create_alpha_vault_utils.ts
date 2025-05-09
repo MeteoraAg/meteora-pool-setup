@@ -1,27 +1,30 @@
+import { Wallet } from "@coral-xyz/anchor"
 import AlphaVault, {
-	CustomizableFcfsVaultParams,
-	CustomizableProrataVaultParams,
 	PoolType,
 	SEED,
-	VaultMode,
 	WalletDepositCap
 } from "@meteora-ag/alpha-vault"
 import {
-	ComputeBudgetProgram,
 	Connection,
-	Keypair,
 	PublicKey,
-	SystemProgram,
 	Transaction,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
+import BN from "bn.js"
+import fs from "fs"
+import {
+	AlphaVaultTypeConfig,
+	FcfsAlphaVaultConfig,
+	ProrataAlphaVaultConfig,
+	WhitelistModeConfig
+} from "./config"
 import {
 	ALPHA_VAULT_PROGRAM_IDS,
 	DEFAULT_NODES_PER_TREE,
 	DEFAULT_SEND_TX_MAX_RETRIES,
 	MAX_INSTRUCTIONS_PER_STAKE_ESCROW_ACCOUNTS_CREATED
 } from "./constants"
-import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor"
+import { BalanceTree } from "./merkle_tree"
 import {
 	getAlphaVaultWhitelistMode,
 	getAmountInLamports,
@@ -29,15 +32,6 @@ import {
 	modifyComputeUnitPriceIx,
 	runSimulateTransaction
 } from "./utils"
-import {
-	AlphaVaultTypeConfig,
-	FcfsAlphaVaultConfig,
-	ProrataAlphaVaultConfig,
-	WhitelistModeConfig
-} from "./config"
-import { BN } from "bn.js"
-import { BalanceTree } from "./merkle_tree"
-import fs from "fs"
 
 export async function createFcfsAlphaVault(
 	connection: Connection,
@@ -99,7 +93,9 @@ export async function createFcfsAlphaVault(
 			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
 	}
 
+	// @ts-expect-error: Transaction version difference
 	const initAlphaVaultTx = (await AlphaVault.createCustomizableFcfsVault(
+		// @ts-expect-error: Connection version difference
 		connection,
 		{
 			quoteMint,
@@ -200,7 +196,9 @@ export async function createProrataAlphaVault(
 			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
 	}
 
+	// @ts-expect-error: Transaction version difference
 	const initAlphaVaultTx = (await AlphaVault.createCustomizableProrataVault(
+		// @ts-expect-error: Connection version difference
 		connection,
 		{
 			quoteMint,
@@ -344,6 +342,7 @@ export async function createPermissionedAlphaVaultWithMerkleProof(
 
 	console.log(`- Using kv proof filepath ${kvProofFolderPath}`)
 
+	// @ts-expect-error: Connection version difference
 	const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
 		cluster
 	})
@@ -473,6 +472,22 @@ export async function createPermissionedAlphaVaultWithAuthority(
 		opts?.alphaVaultProgramId ?? ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]
 	)
 
+	let cluster = ""
+
+	switch (alphaVaultProgramId.toBase58()) {
+		case ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]:
+			cluster = "mainnet-beta"
+			break
+		case ALPHA_VAULT_PROGRAM_IDS["devnet"]:
+			cluster = "devnet"
+			break
+		case ALPHA_VAULT_PROGRAM_IDS["localhost"]:
+			cluster = "localhost"
+			break
+		default:
+			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
+	}
+
 	const [alphaVaultPubkey] = deriveAlphaVault(
 		wallet.publicKey,
 		poolAddress,
@@ -521,11 +536,10 @@ export async function createPermissionedAlphaVaultWithAuthority(
 	// 2. Create StakeEscrow account for each whitelisted wallet
 	console.log("Creating stake escrow accounts...")
 
-	const alphaVault = await createAlphaVaultInstance(
-		connection,
-		alphaVaultProgramId,
-		alphaVaultPubkey
-	)
+	// @ts-expect-error: Connection version difference
+	const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
+		cluster
+	})
 
 	// Create StakeEscrow accounts for whitelist list
 	const instructions =
