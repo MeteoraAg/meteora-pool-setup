@@ -45,7 +45,8 @@ import {
 	createAssociatedTokenAccountInstruction,
 	createTransferInstruction,
 	getAssociatedTokenAddressSync,
-	getMint
+	getMint,
+	unpackMint
 } from "@solana/spl-token"
 
 async function main() {
@@ -67,8 +68,12 @@ async function main() {
 		throw new Error("Missing baseMint in configuration")
 	}
 	const baseMint = new PublicKey(config.baseMint)
-	const baseMintAccount = await getMint(connection, baseMint, connection.commitment)
-	const baseDecimals = baseMintAccount.decimals
+	const baseMintAccount = await connection.getAccountInfo(
+		baseMint,
+		connection.commitment
+	)
+	const baseMintState = unpackMint(baseMint, baseMintAccount, baseMintAccount.owner)
+	const baseDecimals = baseMintState.decimals
 
 	let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint)
 	const quoteDecimals = await getQuoteDecimals(

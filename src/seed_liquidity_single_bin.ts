@@ -14,7 +14,7 @@ import DLMM, {
 	deriveCustomizablePermissionlessLbPair
 } from "@meteora-ag/dlmm"
 import BN from "bn.js"
-import { getMint } from "@solana/spl-token"
+import { getMint, unpackMint } from "@solana/spl-token"
 
 async function main() {
 	let config: MeteoraConfig = parseConfigFromCli()
@@ -35,8 +35,9 @@ async function main() {
 		throw new Error("Missing baseMint in configuration")
 	}
 	const baseMint = new PublicKey(config.baseMint)
-	const baseMintAccount = await getMint(connection, baseMint, connection.commitment)
-	const baseDecimals = baseMintAccount.decimals
+	const baseMintAccount = await connection.getAccountInfo(baseMint)
+	const baseMintState = unpackMint(baseMint, baseMintAccount, baseMintAccount.owner)
+	const baseDecimals = baseMintState.decimals
 
 	let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint)
 
