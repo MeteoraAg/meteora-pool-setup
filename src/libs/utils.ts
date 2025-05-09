@@ -85,7 +85,8 @@ export function extraConfigValidation(config: MeteoraConfig) {
 
 		if (
 			config.alphaVault.poolType != "dynamic" &&
-			config.alphaVault.poolType != "dlmm"
+			config.alphaVault.poolType != "dlmm" &&
+			config.alphaVault.poolType != "damm2"
 		) {
 			throw new Error(
 				`Alpha vault pool tyep ${config.alphaVault.poolType} isn't supported.`

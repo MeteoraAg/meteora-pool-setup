@@ -206,7 +206,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 			nullable: true,
 			properties: {
 				poolType: {
-					enum: ["dynamic", "dlmm"]
+					enum: ["dynamic", "dlmm", "damm2"]
 				},
 				alphaVaultType: {
 					enum: ["fcfs", "prorata"]

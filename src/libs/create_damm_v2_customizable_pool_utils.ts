@@ -16,7 +16,12 @@ import {
 	DEFAULT_SEND_TX_MAX_RETRIES
 } from "../"
 import { Wallet, BN } from "@coral-xyz/anchor"
-import { getMint, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import {
+	getMint,
+	TOKEN_2022_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,
+	unpackMint
+} from "@solana/spl-token"
 import {
 	BaseFee,
 	CpAmm,
@@ -63,10 +68,9 @@ export async function createDammV2CustomizablePool(
 		connection.commitment
 	)
 
-	const baseMint = await getMint(
-		connection,
+	const baseMint = unpackMint(
 		baseTokenMint,
-		connection.commitment,
+		baseMintAccountInfo,
 		baseMintAccountInfo.owner
 	)
 
