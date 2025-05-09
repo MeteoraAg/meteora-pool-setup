@@ -3,7 +3,7 @@
 	"dryRun": false,
 	"keypairFilePath": "id.json",
 	"computeUnitPriceMicroLamports": 100000,
-	"baseMint": "Qbx2eTsKQ57vGdB8DbKjeUBHQZ5BnJuFSTpKtWAM1s7",
+	"baseMint": "H5XwKLit6Nt4tZPLisFR2sH1gvUBxvqX7LcihSi7cnEk",
 	"quoteSymbol": "SOL",
 	"dynamicAmmV2": {
 		"creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",
@@ -26,11 +26,11 @@
 	},
 	"alphaVault": {
 		"poolType": "damm2",
-		"alphaVaultType": "fcfs",
+		"alphaVaultType": "prorata",
 		"depositingPoint": 1733626299,
 		"startVestingPoint": 1746808201,
 		"endVestingPoint": 1746808201,
-		"maxDepositCap": 10000,
+		"maxBuyingCap": 10000,
 		"individualDepositingCap": 1,
 		"escrowFee": 0,
 		"whitelistMode": "permissionless"

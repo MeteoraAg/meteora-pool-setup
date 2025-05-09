@@ -293,6 +293,8 @@ export function getAlphaVaultPoolType(poolType: PoolTypeConfig): PoolType {
 		return PoolType.DYNAMIC
 	} else if (poolType == PoolTypeConfig.Dlmm) {
 		return PoolType.DLMM
+	} else if (poolType == PoolTypeConfig.DammV2) {
+		return PoolType.DAMMV2
 	} else {
 		throw new Error(`Unsupported alpha vault pool type: ${poolType}`)
 	}
@@ -318,6 +320,8 @@ export function toAlphaVaulSdkPoolType(poolType: PoolTypeConfig): PoolType {
 			return PoolType.DYNAMIC
 		case PoolTypeConfig.Dlmm:
 			return PoolType.DLMM
+		case PoolTypeConfig.DammV2:
+			return PoolType.DAMMV2
 		default:
 			throw new Error(`Unsupported alpha vault pool type: ${poolType}`)
 	}
