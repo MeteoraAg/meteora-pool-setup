@@ -3,7 +3,7 @@
 	"dryRun": false,
 	"keypairFilePath": "id.json",
 	"computeUnitPriceMicroLamports": 100000,
-	"baseMint": "Qbx2eTsKQ57vGdB8DbKjeUBHQZ5BnJuFSTpKtWAM1s7",
+	"baseMint": "2Gz24wgquQpDr6HgWtc7ignvARe7ZYMR5GZyuXwgPdTQ",
 	"quoteSymbol": "SOL",
 	"dynamicAmmV2": {
 		"creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",

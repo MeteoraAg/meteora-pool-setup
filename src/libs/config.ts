@@ -531,7 +531,8 @@ export enum AlphaVaultTypeConfig {
 
 export enum PoolTypeConfig {
 	Dynamic = "dynamic",
-	Dlmm = "dlmm"
+	Dlmm = "dlmm",
+	DammV2 = "damm2"
 }
 
 export enum WhitelistModeConfig {

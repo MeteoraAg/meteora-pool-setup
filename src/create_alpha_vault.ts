@@ -27,7 +27,7 @@ import {
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor"
 
 import { BN } from "bn.js"
-import AlphaVault, { PoolType, WalletDepositCap } from "@meteora-ag/alpha-vault"
+import { WalletDepositCap } from "@meteora-ag/alpha-vault"
 import {
 	LBCLMM_PROGRAM_IDS,
 	deriveCustomizablePermissionlessLbPair
@@ -42,6 +42,7 @@ import {
 	createPermissionedAlphaVaultWithMerkleProof,
 	createProrataAlphaVault
 } from "./libs/create_alpha_vault_utils"
+import { deriveCustomizablePoolAddress } from "@meteora-ag/cp-amm-sdk"
 
 async function main() {
 	let config: MeteoraConfig = parseConfigFromCli()
@@ -92,6 +93,8 @@ async function main() {
 			quoteMint,
 			new PublicKey(LBCLMM_PROGRAM_IDS["mainnet-beta"])
 		)
+	} else if (poolType == PoolTypeConfig.DammV2) {
+		poolKey = deriveCustomizablePoolAddress(baseMint, quoteMint)
 	} else {
 		throw new Error(`Invalid pool type ${poolType}`)
 	}
