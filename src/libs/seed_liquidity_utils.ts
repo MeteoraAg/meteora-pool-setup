@@ -66,7 +66,7 @@ export async function seedLiquiditySingleBin(
 	}
 
 	const dlmmInstance = await DLMM.create(connection, poolKey, opts)
-	const seedLiquidityIxs = await dlmmInstance.seedLiquiditySingleBin(
+	const { instructions } = await dlmmInstance.seedLiquiditySingleBin(
 		payerKeypair.publicKey,
 		baseKeypair.publicKey,
 		seedAmount,
@@ -93,7 +93,7 @@ export async function seedLiquiditySingleBin(
 		lastValidBlockHeight
 	})
 		.add(setCUPriceIx)
-		.add(...seedLiquidityIxs)
+		.add(...instructions)
 
 	if (dryRun) {
 		console.log(`\n> Simulating seedLiquiditySingleBin transaction...`)
