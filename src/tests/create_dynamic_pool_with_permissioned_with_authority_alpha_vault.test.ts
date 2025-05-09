@@ -1,11 +1,16 @@
-import { Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js"
-import {
-	DEFAULT_COMMITMENT_LEVEL,
-	DEFAULT_SEND_TX_MAX_RETRIES,
-	SOL_TOKEN_MINT
-} from "../libs/constants"
-import { createPermissionlessDynamicPool, toAlphaVaulSdkPoolType } from "../index"
 import { web3 } from "@coral-xyz/anchor"
+import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+import AlphaVault, { PermissionWithAuthority } from "@meteora-ag/alpha-vault"
+import {
+	ASSOCIATED_TOKEN_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,
+	createMint,
+	getOrCreateAssociatedTokenAccount,
+	mintTo
+} from "@solana/spl-token"
+import { Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js"
+import { BN } from "bn.js"
+import { createPermissionlessDynamicPool, toAlphaVaulSdkPoolType } from "../index"
 import {
 	ActivationTypeConfig,
 	AlphaVaultTypeConfig,
@@ -14,29 +19,23 @@ import {
 	WhitelistModeConfig
 } from "../libs/config"
 import {
-	ASSOCIATED_TOKEN_PROGRAM_ID,
-	TOKEN_PROGRAM_ID,
-	createMint,
-	getOrCreateAssociatedTokenAccount,
-	mintTo
-} from "@solana/spl-token"
+	DEFAULT_COMMITMENT_LEVEL,
+	DEFAULT_SEND_TX_MAX_RETRIES,
+	SOL_TOKEN_MINT
+} from "../libs/constants"
 import {
-	connection,
-	payerKeypair,
-	rpcUrl,
-	keypairFilePath,
-	payerWallet,
-	DYNAMIC_AMM_PROGRAM_ID,
-	ALPHA_VAULT_PROGRAM_ID
-} from "./setup"
-import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
-import {
-	createAlphaVaultInstance,
 	createPermissionedAlphaVaultWithAuthority,
 	deriveAlphaVault
 } from "../libs/create_alpha_vault_utils"
-import { BN } from "bn.js"
-import { PermissionWithAuthority } from "@meteora-ag/alpha-vault"
+import {
+	ALPHA_VAULT_PROGRAM_ID,
+	DYNAMIC_AMM_PROGRAM_ID,
+	connection,
+	keypairFilePath,
+	payerKeypair,
+	payerWallet,
+	rpcUrl
+} from "./setup"
 
 describe("Test create dynamic pool with permissioned authority fcfs alpha vault", () => {
 	const WEN_DECIMALS = 5
@@ -173,7 +172,10 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null,
+			m3m3: null
 		}
 
 		// 1. Create pool
@@ -239,11 +241,10 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 			ALPHA_VAULT_PROGRAM_ID
 		)
 
-		const alphaVault = await createAlphaVaultInstance(
-			connection,
-			ALPHA_VAULT_PROGRAM_ID,
-			alphaVaultPubkey
-		)
+		// @ts-expect-error: Connection version difference
+		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
+			cluster: "localhost"
+		})
 
 		expect(alphaVault.vault.whitelistMode).toEqual(PermissionWithAuthority)
 
@@ -254,8 +255,9 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 				whitelistWallet_1.publicKey
 			)
 
-			const depositTxHash = await sendAndConfirmTransaction(
+			await sendAndConfirmTransaction(
 				connection,
+				// @ts-expect-error: Transaction version difference
 				depositTx,
 				[whitelistWallet_1],
 				{
@@ -282,8 +284,9 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 				whitelistWallet_1.publicKey
 			)
 
-			const depositTxHash = await sendAndConfirmTransaction(
+			await sendAndConfirmTransaction(
 				connection,
+				// @ts-expect-error: Transaction version difference
 				depositTx,
 				[whitelistWallet_1],
 				{
@@ -299,7 +302,7 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 				whitelistWallet_1.publicKey
 			)
 			expect(whitelistWalletEscrow_1.totalDeposit.toString()).toEqual(
-				(depositAmount * 2).toString()
+				depositAmount.muln(2).toString()
 			)
 		}
 
@@ -312,6 +315,7 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 			)
 
 			await expect(
+				// @ts-expect-error: Transaction version difference
 				sendAndConfirmTransaction(connection, depositTx, [whitelistWallet_1], {
 					commitment: DEFAULT_COMMITMENT_LEVEL,
 					maxRetries: DEFAULT_SEND_TX_MAX_RETRIES

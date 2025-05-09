@@ -1,3 +1,22 @@
+import { BN, Wallet } from "@coral-xyz/anchor"
+import {
+	BaseFee,
+	BIN_STEP_BPS_DEFAULT,
+	BIN_STEP_BPS_U128_DEFAULT,
+	CpAmm,
+	getBaseFeeParams,
+	getDynamicFeeParams,
+	getPriceFromSqrtPrice,
+	getSqrtPriceFromPrice,
+	MAX_SQRT_PRICE,
+	MIN_SQRT_PRICE,
+	PoolFeesParams
+} from "@meteora-ag/cp-amm-sdk"
+import {
+	TOKEN_2022_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,
+	unpackMint
+} from "@solana/spl-token"
 import {
 	Cluster,
 	Connection,
@@ -6,37 +25,15 @@ import {
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
 import {
-	MeteoraConfig,
+	DEFAULT_SEND_TX_MAX_RETRIES,
 	getAmountInLamports,
-	getQuoteDecimals,
-	runSimulateTransaction,
-	modifyComputeUnitPriceIx,
 	getDammV2ActivationType,
 	getDecimalizedAmount,
-	DEFAULT_SEND_TX_MAX_RETRIES
+	getQuoteDecimals,
+	MeteoraConfig,
+	modifyComputeUnitPriceIx,
+	runSimulateTransaction
 } from "../"
-import { Wallet, BN } from "@coral-xyz/anchor"
-import {
-	getMint,
-	TOKEN_2022_PROGRAM_ID,
-	TOKEN_PROGRAM_ID,
-	unpackMint
-} from "@solana/spl-token"
-import {
-	BaseFee,
-	CpAmm,
-	getDynamicFeeParams,
-	getBaseFeeParams,
-	getPriceFromSqrtPrice,
-	getSqrtPriceFromPrice,
-	MAX_SQRT_PRICE,
-	MIN_SQRT_PRICE,
-	PoolFeesParams,
-	BIN_STEP_BPS_DEFAULT,
-	BIN_STEP_BPS_U128_DEFAULT,
-	getLiquidityDeltaFromAmountA,
-	calculateTransferFeeIncludedAmount
-} from "@meteora-ag/cp-amm-sdk"
 
 export async function createDammV2CustomizablePool(
 	config: MeteoraConfig,
@@ -86,6 +83,7 @@ export async function createDammV2CustomizablePool(
 	const baseDecimals = baseMint.decimals
 
 	// create cp amm instance
+	// @ts-expect-error: Connection version difference
 	const cpAmmInstance = new CpAmm(connection)
 	const {
 		initPrice,
@@ -219,6 +217,7 @@ export async function createDammV2CustomizablePool(
 		tokenBProgram: TOKEN_PROGRAM_ID
 	})
 
+	// @ts-expect-error: Transaction version difference
 	modifyComputeUnitPriceIx(initCustomizePoolTx, config.computeUnitPriceMicroLamports)
 
 	console.log(`\n> Pool address: ${pool}`)
@@ -230,12 +229,14 @@ export async function createDammV2CustomizablePool(
 			connection,
 			[wallet.payer, positionNft],
 			wallet.publicKey,
+			// @ts-expect-error: Transaction version difference
 			[initCustomizePoolTx]
 		)
 	} else {
 		console.log(`>> Sending init pool transaction...`)
 		const initPoolTxHash = await sendAndConfirmTransaction(
 			connection,
+			// @ts-expect-error: Transaction version difference
 			initCustomizePoolTx,
 			[wallet.payer, positionNft],
 			{

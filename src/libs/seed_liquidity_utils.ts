@@ -1,3 +1,4 @@
+import DLMM, { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
 import {
 	Cluster,
 	ComputeBudgetProgram,
@@ -8,9 +9,8 @@ import {
 	TransactionInstruction,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
+import BN from "bn.js"
 import { runSimulateTransaction } from "./utils"
-import { BN } from "bn.js"
-import DLMM, { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
 
 import { DEFAULT_SEND_TX_MAX_RETRIES, DLMM_PROGRAM_IDS } from "./constants"
 
@@ -65,6 +65,7 @@ export async function seedLiquiditySingleBin(
 		)
 	}
 
+	// @ts-expect-error: Connection version difference
 	const dlmmInstance = await DLMM.create(connection, poolKey, opts)
 	const { instructions } = await dlmmInstance.seedLiquiditySingleBin(
 		payerKeypair.publicKey,
@@ -170,6 +171,7 @@ export async function seedLiquidityLfg(
 		)
 	}
 
+	// @ts-expect-error: Connection version difference
 	const dlmmInstance = await DLMM.create(connection, poolKey, opts)
 
 	const {

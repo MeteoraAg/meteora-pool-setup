@@ -1,32 +1,31 @@
+import { Wallet } from "@coral-xyz/anchor"
+import { AmmImpl } from "@mercurial-finance/dynamic-amm-sdk"
+import { CustomizableParams } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/types"
+import {
+	createProgram,
+	deriveCustomizablePermissionlessConstantProductPoolAddress
+} from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+import DLMM, { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
+import { getMint } from "@solana/spl-token"
 import {
 	Cluster,
 	Connection,
 	PublicKey,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
+import { BN } from "bn.js"
 import {
+	DEFAULT_SEND_TX_MAX_RETRIES,
+	DLMM_PROGRAM_IDS,
 	MeteoraConfig,
 	getAmountInLamports,
-	getQuoteDecimals,
-	runSimulateTransaction,
-	getDynamicAmmActivationType,
 	getDlmmActivationType,
-	modifyComputeUnitPriceIx,
-	DLMM_PROGRAM_IDS,
+	getDynamicAmmActivationType,
+	getQuoteDecimals,
 	isPriceRoundingUp,
-	DEFAULT_SEND_TX_MAX_RETRIES,
-	DEFAULT_COMMITMENT_LEVEL
+	modifyComputeUnitPriceIx,
+	runSimulateTransaction
 } from "../"
-import { AmmImpl } from "@mercurial-finance/dynamic-amm-sdk"
-import { Wallet } from "@coral-xyz/anchor"
-import { BN } from "bn.js"
-import DLMM, { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
-import { CustomizableParams } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/types"
-import {
-	deriveCustomizablePermissionlessConstantProductPoolAddress,
-	createProgram
-} from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
-import { getMint } from "@solana/spl-token"
 
 export async function createPermissionlessDynamicPool(
 	config: MeteoraConfig,
@@ -194,6 +193,7 @@ export async function createPermissionlessDlmmPool(
 	const cluster = opts?.cluster || "mainnet-beta"
 	const dlmmProgramId = opts?.programId ?? new PublicKey(DLMM_PROGRAM_IDS[cluster])
 	const initPoolTx = await DLMM.createCustomizablePermissionlessLbPair2(
+		// @ts-expect-error: Connection version difference
 		connection,
 		new BN(binStep),
 		baseMint,
@@ -211,6 +211,7 @@ export async function createPermissionlessDlmmPool(
 		}
 	)
 
+	// @ts-expect-error: Transaction version difference
 	modifyComputeUnitPriceIx(initPoolTx, config.computeUnitPriceMicroLamports)
 
 	let poolKey: PublicKey
@@ -225,12 +226,14 @@ export async function createPermissionlessDlmmPool(
 	if (config.dryRun) {
 		console.log(`\n> Simulating init pool tx...`)
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
+			// @ts-expect-error: Transaction version difference
 			initPoolTx
 		])
 	} else {
 		console.log(`>> Sending init pool transaction...`)
 		let initPoolTxHash = await sendAndConfirmTransaction(
 			connection,
+			// @ts-expect-error: Transaction version difference
 			initPoolTx,
 			[wallet.payer],
 			{

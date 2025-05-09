@@ -1,19 +1,14 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "types": [
-      "jest",
-      "bun"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "module": "commonjs",
-    "target": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true
-  }
+	"compilerOptions": {
+		"outDir": "dist",
+		"types": ["jest", "bun"],
+		"typeRoots": ["./node_modules/@types"],
+		"module": "commonjs",
+		"target": "ESNext",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"noImplicitAny": false,
+		"skipLibCheck": true
+	}
 }

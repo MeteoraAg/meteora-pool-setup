@@ -1,7 +1,14 @@
 import { Wallet } from "@coral-xyz/anchor"
 import {
+	MINT_SIZE,
+	TOKEN_PROGRAM_ID,
+	createInitializeMint2Instruction,
+	createMintToInstruction,
+	getMinimumBalanceForRentExemptMint,
+	getOrCreateAssociatedTokenAccount
+} from "@solana/spl-token"
+import {
 	ComputeBudgetProgram,
-	ConfirmOptions,
 	Connection,
 	Keypair,
 	PublicKey,
@@ -11,20 +18,8 @@ import {
 	TransactionSignature,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
-import {
-	DEFAULT_COMMITMENT_LEVEL,
-	DEFAULT_SEND_TX_MAX_RETRIES,
-	getAmountInLamports
-} from ".."
-import { BN } from "bn.js"
-import {
-	MINT_SIZE,
-	TOKEN_PROGRAM_ID,
-	createInitializeMint2Instruction,
-	createMintToInstruction,
-	getMinimumBalanceForRentExemptMint,
-	getOrCreateAssociatedTokenAccount
-} from "@solana/spl-token"
+import BN from "bn.js"
+import { DEFAULT_SEND_TX_MAX_RETRIES, getAmountInLamports } from ".."
 
 export interface CreateTokenMintOptions {
 	dryRun: boolean
@@ -90,7 +85,7 @@ async function createAndMintToken(
 		mint,
 		walletTokenATA.address,
 		wallet.publicKey,
-		mintAmountLamport,
+		BigInt(mintAmountLamport.toString()),
 		[],
 		computeUnitPriceMicroLamports
 	)

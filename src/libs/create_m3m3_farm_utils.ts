@@ -1,17 +1,14 @@
+import { BN } from "@coral-xyz/anchor"
+import StakeForFee, { deriveFeeVault } from "@meteora-ag/m3m3"
 import {
 	Connection,
 	Keypair,
 	PublicKey,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
-import { M3m3Config, MeteoraConfig } from "./config"
+import { M3m3Config } from "./config"
 import { DEFAULT_SEND_TX_MAX_RETRIES, M3M3_PROGRAM_IDS } from "./constants"
-import StakeForFee, { deriveFeeVault } from "@meteora-ag/m3m3"
-import { BN } from "@coral-xyz/anchor"
 import { modifyComputeUnitPriceIx, runSimulateTransaction } from "./utils"
-import { getAssociatedTokenAddressSync } from "@solana/spl-token"
-import AmmImpl, { VaultIdl } from "@mercurial-finance/dynamic-amm-sdk"
-import Decimal from "decimal.js"
 
 export async function create_m3m3_farm(
 	connection: Connection,
@@ -54,6 +51,7 @@ export async function create_m3m3_farm(
 
 	// m3m3 farm didn't exist
 	const createTx = await StakeForFee.createFeeVault(
+		// @ts-expect-error: Connection version difference
 		connection,
 		poolKey,
 		stakeMint,
@@ -65,13 +63,17 @@ export async function create_m3m3_farm(
 			startFeeDistributeTimestamp
 		}
 	)
+
+	// @ts-expect-error: Transaction version difference
 	modifyComputeUnitPriceIx(createTx, computeUnitPriceMicroLamports)
 
 	if (dryRun) {
 		console.log(`> Simulating create m3m3 farm tx...`)
+		// @ts-expect-error: Transaction version difference
 		await runSimulateTransaction(connection, [payer], payer.publicKey, [createTx])
 	} else {
 		console.log(`>> Sending create m3m3 farm transaction...`)
+		// @ts-expect-error: Transaction version difference
 		const txHash = await sendAndConfirmTransaction(connection, createTx, [payer], {
 			commitment: connection.commitment,
 			maxRetries: DEFAULT_SEND_TX_MAX_RETRIES

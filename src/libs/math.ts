@@ -1,6 +1,6 @@
-import { BN } from "bn.js"
-import Decimal from "decimal.js"
 import { MAX_BIN_PER_POSITION, getPriceOfBinByBinId } from "@meteora-ag/dlmm"
+import BN from "bn.js"
+import Decimal from "decimal.js"
 
 export function generateAmountForBinRange(
 	amount: BN,

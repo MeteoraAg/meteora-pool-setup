@@ -1,13 +1,5 @@
-import { Connection, Keypair, PublicKey } from "@solana/web3.js"
-import fs from "fs"
-import { DLMM_PROGRAM_IDS } from "../libs/constants"
-import { createPermissionlessDlmmPool, seedLiquiditySingleBin } from "../index"
 import { BN, Wallet, web3 } from "@coral-xyz/anchor"
-import {
-	ActivationTypeConfig,
-	MeteoraConfig,
-	PriceRoundingConfig
-} from "../libs/config"
+import { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -15,7 +7,15 @@ import {
 	getOrCreateAssociatedTokenAccount,
 	mintTo
 } from "@solana/spl-token"
-import { deriveCustomizablePermissionlessLbPair } from "@meteora-ag/dlmm"
+import { Connection, Keypair, PublicKey } from "@solana/web3.js"
+import fs from "fs"
+import { createPermissionlessDlmmPool, seedLiquiditySingleBin } from "../index"
+import {
+	ActivationTypeConfig,
+	MeteoraConfig,
+	PriceRoundingConfig
+} from "../libs/config"
+import { DLMM_PROGRAM_IDS } from "../libs/constants"
 
 const keypairFilePath =
 	"./src/tests/keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json"
@@ -141,7 +141,7 @@ describe("Test Seed Liquidity Single Bin", () => {
 				feeBps,
 				initialPrice,
 				activationType: ActivationTypeConfig.Slot,
-				activationPoint,
+				activationPoint: activationPoint.toNumber(),
 				priceRounding: PriceRoundingConfig.Up,
 				hasAlphaVault: false,
 				creatorPoolOnOffControl: false
@@ -152,7 +152,8 @@ describe("Test Seed Liquidity Single Bin", () => {
 			lfgSeedLiquidity: null,
 			singleBinSeedLiquidity: null,
 			m3m3: null,
-			setDlmmPoolStatus: null
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null
 		}
 
 		//create DLMM pool
