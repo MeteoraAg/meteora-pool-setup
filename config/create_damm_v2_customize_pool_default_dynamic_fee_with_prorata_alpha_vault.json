@@ -1,0 +1,38 @@
+{
+	"rpcUrl": "https://api.devnet.solana.com",
+	"dryRun": true,
+	"keypairFilePath": "/Users/tian/.config/solana/id.json",
+	"computeUnitPriceMicroLamports": 100000,
+	"baseMint": "D1vjvCfzFATa7SQJenriTwYZYamaLL6vsasv2DabYxaz",
+	"quoteSymbol": "SOL",
+	"dynamicAmmV2": {
+		"creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",
+		"baseAmount": 1000,
+		"initPrice": 10,
+		"maxPrice": null,
+		"poolFees": {
+			"maxBaseFeeBps": 5000,
+			"minBaseFeeBps": 100,
+			"numberOfPeriod": 10,
+			"totalDuration": 600,
+			"feeSchedulerMode": 0,
+			"useDynamicFee": false,
+			"dynamicFeeConfig": null
+		},
+		"hasAlphaVault": false,
+		"collectFeeMode": 0,
+		"activationType": "timestamp",
+		"activationPoint": null
+	},
+	"alphaVault": {
+		"poolType": "damm2",
+		"alphaVaultType": "prorata",
+		"depositingPoint": 1733626299,
+		"startVestingPoint": 1733640699,
+		"endVestingPoint": 1733662299,
+		"maxDepositCap": 100,
+		"individualDepositingCap": 0.001,
+		"escrowFee": 0,
+		"whitelistMode": "permissionless"
+	}
+}
