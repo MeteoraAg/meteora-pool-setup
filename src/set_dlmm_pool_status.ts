@@ -31,16 +31,20 @@ async function main() {
 	console.log(`- Using pool address ${poolAddress.toString()}`)
 	console.log(`- Using enabled ${enabled}`)
 
+	// @ts-expect-error: Connection version difference
 	const lbPair = await DLMM.create(connection, poolAddress)
 
 	const tx = await lbPair.setPairStatusPermissionless(enabled, wallet.publicKey)
+	// @ts-expect-error: Transaction version difference
 	modifyComputeUnitPriceIx(tx, config.computeUnitPriceMicroLamports)
 
 	if (config.dryRun) {
 		console.log(`\n> Simulating set DLMM pool status tx...`)
+		// @ts-expect-error: Transaction version difference
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [tx])
 	} else {
 		console.log(`>> Sending set DLMM pool status transaction...`)
+		// @ts-expect-error: Transaction version difference
 		let txHash = await sendAndConfirmTransaction(connection, tx, [wallet.payer], {
 			commitment: connection.commitment,
 			maxRetries: DEFAULT_SEND_TX_MAX_RETRIES

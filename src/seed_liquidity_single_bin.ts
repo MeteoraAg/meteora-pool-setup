@@ -14,7 +14,7 @@ import DLMM, {
 	deriveCustomizablePermissionlessLbPair
 } from "@meteora-ag/dlmm"
 import BN from "bn.js"
-import { getMint } from "@solana/spl-token"
+import { getMint, unpackMint } from "@solana/spl-token"
 
 async function main() {
 	let config: MeteoraConfig = parseConfigFromCli()
@@ -28,15 +28,15 @@ async function main() {
 	console.log(`- Using payer ${keypair.publicKey} to execute commands`)
 
 	const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL)
-	const wallet = new Wallet(keypair)
 	const DLMM_PROGRAM_ID = new PublicKey(LBCLMM_PROGRAM_IDS["mainnet-beta"])
 
 	if (!config.baseMint) {
 		throw new Error("Missing baseMint in configuration")
 	}
 	const baseMint = new PublicKey(config.baseMint)
-	const baseMintAccount = await getMint(connection, baseMint, connection.commitment)
-	const baseDecimals = baseMintAccount.decimals
+	const baseMintAccount = await connection.getAccountInfo(baseMint)
+	const baseMintState = unpackMint(baseMint, baseMintAccount, baseMintAccount.owner)
+	const baseDecimals = baseMintState.decimals
 
 	let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint)
 
@@ -55,10 +55,6 @@ async function main() {
 		throw new Error(`Missing DLMM Single bin seed liquidity in configuration`)
 	}
 
-	const pair = await DLMM.create(connection, poolKey, {
-		cluster: "mainnet-beta"
-	})
-
 	const seedAmount = getAmountInLamports(
 		config.singleBinSeedLiquidity.seedAmount,
 		baseDecimals
@@ -73,11 +69,9 @@ async function main() {
 	const operatorKeypair = safeParseKeypairFromFile(
 		config.singleBinSeedLiquidity.operatorKeypairFilepath
 	)
-	const basePublickey = baseKeypair.publicKey
 	const price = config.singleBinSeedLiquidity.price
 	const positionOwner = new PublicKey(config.singleBinSeedLiquidity.positionOwner)
 	const feeOwner = new PublicKey(config.singleBinSeedLiquidity.feeOwner)
-	const operator = operatorKeypair.publicKey
 	const lockReleasePoint = new BN(config.singleBinSeedLiquidity.lockReleasePoint)
 	const seedTokenXToPositionOwner =
 		config.singleBinSeedLiquidity.seedTokenXToPositionOwner

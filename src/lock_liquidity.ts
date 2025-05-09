@@ -11,7 +11,7 @@ import {
 	DEFAULT_SEND_TX_MAX_RETRIES
 } from "."
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor"
-import { BN } from "bn.js"
+import BN from "bn.js"
 import AmmImpl from "@mercurial-finance/dynamic-amm-sdk"
 import { SEEDS } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/constants"
 import {

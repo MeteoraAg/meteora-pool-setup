@@ -1,18 +1,10 @@
-import { Connection, Keypair, PublicKey } from "@solana/web3.js"
-import fs from "fs"
-import { DLMM_PROGRAM_IDS, DYNAMIC_AMM_PROGRAM_IDS } from "../libs/constants"
-import {
-	createPermissionlessDlmmPool,
-	createPermissionlessDynamicPool,
-	seedLiquidityLfg,
-	seedLiquiditySingleBin
-} from "../index"
 import { BN, Wallet, web3 } from "@coral-xyz/anchor"
-import {
-	ActivationTypeConfig,
-	MeteoraConfig,
-	PriceRoundingConfig
-} from "../libs/config"
+import DLMM, {
+	deriveCustomizablePermissionlessLbPair,
+	getBinArrayLowerUpperBinId,
+	getPriceOfBinByBinId,
+	getTokenBalance
+} from "@meteora-ag/dlmm"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -20,14 +12,17 @@ import {
 	getOrCreateAssociatedTokenAccount,
 	mintTo
 } from "@solana/spl-token"
-import DLMM, {
-	deriveCustomizablePermissionlessLbPair,
-	getBinArrayLowerUpperBinId,
-	getPriceOfBinByBinId,
-	getTokenBalance
-} from "@meteora-ag/dlmm"
-import Decimal from "decimal.js"
+import { Connection, Keypair, PublicKey } from "@solana/web3.js"
 import babar from "babar"
+import Decimal from "decimal.js"
+import fs from "fs"
+import { createPermissionlessDlmmPool, seedLiquidityLfg } from "../index"
+import {
+	ActivationTypeConfig,
+	MeteoraConfig,
+	PriceRoundingConfig
+} from "../libs/config"
+import { DLMM_PROGRAM_IDS } from "../libs/constants"
 
 const keypairFilePath =
 	"./src/tests/keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json"
@@ -38,7 +33,7 @@ const payerKeypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(keypairBuff
 const payerWallet = new Wallet(payerKeypair)
 const DLMM_PROGRAM_ID = new PublicKey(DLMM_PROGRAM_IDS["localhost"])
 
-describe("Test Seed Liquidity LFG", () => {
+describe.only("Test Seed Liquidity LFG", () => {
 	const WEN_DECIMALS = 5
 	const USDC_DECIMALS = 6
 	const WEN_SUPPLY = 100_000_000
@@ -154,7 +149,7 @@ describe("Test Seed Liquidity LFG", () => {
 				feeBps,
 				initialPrice,
 				activationType: ActivationTypeConfig.Slot,
-				activationPoint,
+				activationPoint: activationPoint.toNumber(),
 				priceRounding: PriceRoundingConfig.Up,
 				hasAlphaVault: false,
 				creatorPoolOnOffControl: false
@@ -165,7 +160,8 @@ describe("Test Seed Liquidity LFG", () => {
 			lfgSeedLiquidity: null,
 			singleBinSeedLiquidity: null,
 			m3m3: null,
-			setDlmmPoolStatus: null
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null
 		}
 
 		//create DLMM pool
@@ -218,8 +214,8 @@ describe("Test Seed Liquidity LFG", () => {
 			USDC,
 			seedAmount,
 			curvature,
-			minPricePerLamport,
-			maxPricePerLamport,
+			Number(minPricePerLamport),
+			Number(maxPricePerLamport),
 			lockReleasePoint,
 			seedTokenXToPositionOwner,
 			dryRun,
@@ -231,12 +227,14 @@ describe("Test Seed Liquidity LFG", () => {
 		)
 
 		// WEN balance after = WEN supply - seed amount - 1 lamport
+		// @ts-expect-error: Connection version difference
 		const wenBalanceAfter = await getTokenBalance(connection, userWEN)
 		const expectedBalanceAfter = new BN(WEN_SUPPLY * 10 ** WEN_DECIMALS)
 			.sub(seedAmount)
 			.sub(new BN(1))
 		expect(wenBalanceAfter.toString()).toEqual(expectedBalanceAfter.toString())
 
+		// @ts-expect-error: Connection version difference
 		const pair = await DLMM.create(connection, poolKey, {
 			cluster: "localhost",
 			programId: DLMM_PROGRAM_ID
