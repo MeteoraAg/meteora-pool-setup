@@ -122,8 +122,12 @@ export async function createDammV2CustomizablePool(
 		? getSqrtPriceFromPrice(maxPrice.toString(), baseDecimals, quoteDecimals)
 		: MAX_SQRT_PRICE
 
-	let minSqrtPrice = MIN_SQRT_PRICE
-	let initSqrtPrice = MIN_SQRT_PRICE
+	let initSqrtPrice = getSqrtPriceFromPrice(
+		initPrice.toString(),
+		baseDecimals,
+		quoteDecimals
+	)
+	let minSqrtPrice = initSqrtPrice
 
 	let liquidityDelta = getLiquidityDeltaFromAmountA(
 		tokenAAmount,
@@ -131,26 +135,12 @@ export async function createDammV2CustomizablePool(
 		maxSqrtPrice
 	)
 
-	if (initPrice) {
-		initSqrtPrice = getSqrtPriceFromPrice(
-			initPrice.toString(),
-			baseDecimals,
-			quoteDecimals
-		)
-		let liquidityDelta = getLiquidityDeltaFromAmountA(
-			tokenAAmount,
-			initSqrtPrice,
-			maxSqrtPrice
-		)
-		if (quoteAmount) {
-			tokenBAmount = getAmountInLamports(quoteAmount, quoteDecimals)
-			// L = Δb / (√P_upper - √P_lower)
-			// √P_lower = √P_upper - Δb / L
-			const numerator = tokenBAmount.shln(128).div(liquidityDelta)
-			minSqrtPrice = initSqrtPrice.sub(numerator)
-		} else {
-			minSqrtPrice = initSqrtPrice
-		}
+	if (quoteAmount) {
+		tokenBAmount = getAmountInLamports(quoteAmount, quoteDecimals)
+		// L = Δb / (√P_upper - √P_lower)
+		// √P_lower = √P_upper - Δb / L
+		const numerator = tokenBAmount.shln(128).div(liquidityDelta)
+		minSqrtPrice = initSqrtPrice.sub(numerator)
 	}
 	console.log(
 		`- Using base token with amount = ${getDecimalizedAmount(tokenAAmount, baseDecimals)}`

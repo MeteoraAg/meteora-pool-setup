@@ -3,13 +3,13 @@
     "dryRun": true,
     "keypairFilePath": "id.json",
     "computeUnitPriceMicroLamports": 100000,
-    "baseMint": "HyKWQm6D9HK9V5zpigaSga7UU9Uie7952cesGeven3ke",
+    "baseMint": "6DYKSXkffzwKWLokHQTCtfJwnMQGzvVWkTNAuu9og2Cf",
     "quoteSymbol": "SOL",
     "dynamicAmmV2": {
         "creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",
         "baseAmount": 1000,
-        "quoteAmount": 1,
-        "initPrice": 10,
+        "quoteAmount": 0.001,
+        "initPrice": 1,
         "maxPrice": null,
         "poolFees": {
             "maxBaseFeeBps": 5000,
