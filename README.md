@@ -62,7 +62,8 @@ Also we need to provide the keypair for the payer wallet in `keypair.json` file.
 
 ### Dynamic AMM V2 configuration
 - `baseAmount`: Base token amount.
-- `initPrice`: Initial price for the pool (min price in price range)
+- `quoteAmount`: Quote token amount (Nullable value)
+- `initPrice`: Initial price for the pool (Nullable value). If null init price and min price will use default MIN_SQRT_PRICE
 - `maxPrice`: Max price range setup (null to use default)
 - `poolFees`:
     - `maxBaseFeeBps`: Starting fee in basis points (e.g., 25 = 0.25%). It is base fee if scheduler is not set.

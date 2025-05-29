@@ -28,7 +28,9 @@ import {
 	MIN_SQRT_PRICE,
 	PoolFeesParams,
 	BIN_STEP_BPS_DEFAULT,
-	BIN_STEP_BPS_U128_DEFAULT
+	BIN_STEP_BPS_U128_DEFAULT,
+	getLiquidityDeltaFromAmountA,
+	calculateTransferFeeIncludedAmount
 } from "@meteora-ag/cp-amm-sdk"
 
 export async function createDammV2CustomizablePool(
@@ -86,6 +88,7 @@ export async function createDammV2CustomizablePool(
 		maxPrice,
 		poolFees,
 		baseAmount,
+		quoteAmount,
 		hasAlphaVault,
 		activationPoint,
 		activationType,
@@ -101,31 +104,54 @@ export async function createDammV2CustomizablePool(
 		useDynamicFee
 	} = poolFees
 	// setup pool params
-	const initSqrtPrice = initPrice
-		? getSqrtPriceFromPrice(initPrice.toString(), baseDecimals, quoteDecimals)
-		: MIN_SQRT_PRICE
+
+	let tokenAAmount = getAmountInLamports(baseAmount, baseDecimals)
+	let tokenBAmount = new BN(0)
+	// transfer fee if token2022
+	if (baseTokenInfo) {
+		tokenAAmount = tokenAAmount.sub(
+			calculateTransferFeeIncludedAmount(
+				tokenAAmount,
+				baseTokenInfo.mint,
+				baseTokenInfo.currentEpoch
+			).transferFee
+		)
+	}
+
 	const maxSqrtPrice = maxPrice
 		? getSqrtPriceFromPrice(maxPrice.toString(), baseDecimals, quoteDecimals)
 		: MAX_SQRT_PRICE
 
-	if (
-		initSqrtPrice.gte(maxSqrtPrice) &&
-		initSqrtPrice.gte(MIN_SQRT_PRICE) &&
-		maxSqrtPrice.lte(MAX_SQRT_PRICE)
-	) {
-		throw new Error("Invalid price range")
-	}
+	let minSqrtPrice = MIN_SQRT_PRICE
+	let initSqrtPrice = MIN_SQRT_PRICE
 
-	const tokenAAmount = getAmountInLamports(baseAmount, baseDecimals)
-	const tokenBAmount = new BN(0)
-	const liquidityDelta = cpAmmInstance.preparePoolCreationSingleSide({
+	let liquidityDelta = getLiquidityDeltaFromAmountA(
 		tokenAAmount,
-		minSqrtPrice: initSqrtPrice,
-		maxSqrtPrice,
 		initSqrtPrice,
-		tokenAInfo: baseTokenInfo
-	})
+		maxSqrtPrice
+	)
 
+	if (initPrice) {
+		initSqrtPrice = getSqrtPriceFromPrice(
+			initPrice.toString(),
+			baseDecimals,
+			quoteDecimals
+		)
+		let liquidityDelta = getLiquidityDeltaFromAmountA(
+			tokenAAmount,
+			initSqrtPrice,
+			maxSqrtPrice
+		)
+		if (quoteAmount) {
+			tokenBAmount = getAmountInLamports(quoteAmount, quoteDecimals)
+			// L = Δb / (√P_upper - √P_lower)
+			// √P_lower = √P_upper - Δb / L
+			const numerator = tokenBAmount.shln(128).div(liquidityDelta)
+			minSqrtPrice = initSqrtPrice.sub(numerator)
+		} else {
+			minSqrtPrice = initSqrtPrice
+		}
+	}
 	console.log(
 		`- Using base token with amount = ${getDecimalizedAmount(tokenAAmount, baseDecimals)}`
 	)
@@ -134,7 +160,7 @@ export async function createDammV2CustomizablePool(
 	)
 
 	console.log(
-		`- Price range [${initPrice}, ${getPriceFromSqrtPrice(maxSqrtPrice, baseDecimals, quoteDecimals)}]`
+		`- Price range [${getPriceFromSqrtPrice(minSqrtPrice, baseDecimals, quoteDecimals)}, ${getPriceFromSqrtPrice(maxSqrtPrice, baseDecimals, quoteDecimals)}]`
 	)
 
 	const activationTypeValue = getDammV2ActivationType(activationType)
@@ -186,7 +212,7 @@ export async function createDammV2CustomizablePool(
 		tokenBMint: quoteTokenMint,
 		tokenAAmount: tokenAAmount,
 		tokenBAmount: tokenBAmount,
-		sqrtMinPrice: initSqrtPrice,
+		sqrtMinPrice: minSqrtPrice,
 		sqrtMaxPrice: maxSqrtPrice,
 		liquidityDelta: liquidityDelta,
 		initSqrtPrice,

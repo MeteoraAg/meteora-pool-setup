@@ -6,7 +6,8 @@
 		"format": "bun prettier ./src --write",
 		"test": "bun test",
 		"create-dynamic-amm-pool": "bun run src/create_pool.ts --config ./config/create_dynamic_amm_pool.json",
-		"create-dynamic-v2-amm-pool": "bun run src/create_damm_v2_customizable_pool.ts --config ./config/create_damm_v2_customize_pool.json",
+		"create-dynamic-v2-amm-pool": "bun run src/create_damm_v2_customizable_pool.ts --config ./config/create_damm_v2_customize_pool_default_dynamic_fee.json",
+		"create-dynamic-v2-amm-pool-min-price": "bun run src/create_damm_v2_customizable_pool.ts --config ./config/create_damm_v2_customize_pool_with_min_price_fee_schedule.json",
 		"create-dlmm-pool": "bun run src/create_pool.ts --config ./config/create_dlmm_pool.json",
 		"start-test-validator": "solana-test-validator --bind-address 0.0.0.0 --account-dir ./src/tests/artifacts/accounts --bpf-program LbVRzDTvBDEcrthxfZ4RL6yiq3uZw8bS6MwtdY6UhFQ ./src/tests/artifacts/lb_clmm.so --bpf-program Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB ./src/tests/artifacts/dynamic_amm.so --bpf-program 24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi ./src/tests/artifacts/dynamic_vault.so --bpf-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s ./src/tests/artifacts/metaplex.so --bpf-program SNPmGgnywBvvrAKMLundzG6StojyHTHDLu7T4sdhP4k ./src/tests/artifacts/alpha_vault.so --mint bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1 --reset"
 	},

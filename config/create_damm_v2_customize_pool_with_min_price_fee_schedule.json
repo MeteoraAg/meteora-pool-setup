@@ -8,7 +8,7 @@
     "dynamicAmmV2": {
         "creator": "4JTYKJAyS7eAXQRSxvMbmqgf6ajf3LR9JrAXpVEcww2q",
         "baseAmount": 1000,
-        "quoteAmount": null,
+        "quoteAmount": 1,
         "initPrice": 10,
         "maxPrice": null,
         "poolFees": {
