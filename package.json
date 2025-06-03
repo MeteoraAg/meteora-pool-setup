@@ -16,7 +16,7 @@
 		"@mercurial-finance/dynamic-amm-sdk": "^1.1.19",
 		"@meteora-ag/alpha-vault": "^1.1.8",
 		"@meteora-ag/cp-amm-sdk": "1.0.2",
-		"@meteora-ag/dlmm": "1.4.11",
+		"@meteora-ag/dlmm": "1.5.3",
 		"@meteora-ag/m3m3": "^1.0.5",
 		"@solana/spl-token": "^0.4.9",
 		"@solana/spl-token-registry": "^0.2.4574",

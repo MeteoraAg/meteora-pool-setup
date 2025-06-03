@@ -116,17 +116,6 @@ async function main() {
 	const lockReleasePoint = new BN(config.lfgSeedLiquidity.lockReleasePoint)
 	const seedTokenXToPositionOwner = config.lfgSeedLiquidity.seedTokenXToPositionOwner
 
-	const minPricePerLamport = DLMM.getPricePerLamport(
-		baseDecimals,
-		quoteDecimals,
-		minPrice
-	)
-	const maxPricePerLamport = DLMM.getPricePerLamport(
-		baseDecimals,
-		quoteDecimals,
-		maxPrice
-	)
-
 	await seedLiquidityLfg(
 		connection,
 		keypair,
@@ -138,8 +127,8 @@ async function main() {
 		quoteMint,
 		seedAmount,
 		curvature,
-		minPricePerLamport,
-		maxPricePerLamport,
+		minPrice,
+		maxPrice,
 		lockReleasePoint,
 		seedTokenXToPositionOwner,
 		config.dryRun,
