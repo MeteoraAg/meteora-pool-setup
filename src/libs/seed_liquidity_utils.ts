@@ -66,18 +66,19 @@ export async function seedLiquiditySingleBin(
 	}
 
 	const dlmmInstance = await DLMM.create(connection, poolKey, opts)
-	const seedLiquidityIxs = await dlmmInstance.seedLiquiditySingleBin(
-		payerKeypair.publicKey,
-		baseKeypair.publicKey,
-		seedAmount,
-		price,
-		priceRounding == "up",
-		positionOwner,
-		feeOwner,
-		operatorKeypair.publicKey,
-		lockReleasePoint,
-		seedTokenXToPositionOwner
-	)
+	const { instructions: seedLiquidityIxs } =
+		await dlmmInstance.seedLiquiditySingleBin(
+			payerKeypair.publicKey,
+			baseKeypair.publicKey,
+			seedAmount,
+			price,
+			priceRounding == "up",
+			positionOwner,
+			feeOwner,
+			operatorKeypair.publicKey,
+			lockReleasePoint,
+			seedTokenXToPositionOwner
+		)
 
 	const setCUPriceIx = ComputeBudgetProgram.setComputeUnitPrice({
 		microLamports: computeUnitPriceMicroLamports
