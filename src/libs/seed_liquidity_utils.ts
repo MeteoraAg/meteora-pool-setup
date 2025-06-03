@@ -132,8 +132,8 @@ export async function seedLiquidityLfg(
 	quoteMint: PublicKey,
 	seedAmount: BN,
 	curvature: number,
-	minPricePerLamport: BN,
-	maxPricePerLamport: BN,
+	minPrice: number,
+	maxPrice: number,
 	lockReleasePoint: BN,
 	seedTokenXToPositionOwner: boolean,
 	dryRun: boolean,
@@ -156,8 +156,8 @@ export async function seedLiquidityLfg(
 
 	console.log(`- Using seedAmount in lamports = ${seedAmount}`)
 	console.log(`- Using curvature = ${curvature}`)
-	console.log(`- Using minPrice per lamport ${minPricePerLamport}`)
-	console.log(`- Using maxPrice per lamport ${maxPricePerLamport}`)
+	console.log(`- Using minPrice per lamport ${minPrice}`)
+	console.log(`- Using maxPrice per lamport ${maxPrice}`)
 	console.log(`- Using operator ${operatorKeypair.publicKey}`)
 	console.log(`- Using positionOwner ${positionOwner}`)
 	console.log(`- Using feeOwner ${feeOwner}`)
@@ -180,8 +180,8 @@ export async function seedLiquidityLfg(
 		positionOwner,
 		seedAmount,
 		curvature,
-		minPricePerLamport,
-		maxPricePerLamport,
+		minPrice,
+		maxPrice,
 		baseKeypair.publicKey,
 		payerKeypair.publicKey,
 		feeOwner,
