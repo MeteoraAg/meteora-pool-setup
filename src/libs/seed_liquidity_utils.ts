@@ -157,8 +157,8 @@ export async function seedLiquidityLfg(
 
 	console.log(`- Using seedAmount in lamports = ${seedAmount}`)
 	console.log(`- Using curvature = ${curvature}`)
-	console.log(`- Using minPrice per lamport ${minPrice}`)
-	console.log(`- Using maxPrice per lamport ${maxPrice}`)
+	console.log(`- Using minPrice ${minPrice}`)
+	console.log(`- Using maxPrice ${maxPrice}`)
 	console.log(`- Using operator ${operatorKeypair.publicKey}`)
 	console.log(`- Using positionOwner ${positionOwner}`)
 	console.log(`- Using feeOwner ${feeOwner}`)
