@@ -1,6 +1,6 @@
 {
 	"name": "meteora_pool_setup",
-	"version": "1.4.6",
+	"version": "1.4.7",
 	"main": "index.js",
 	"scripts": {
 		"format": "bun prettier ./src --write",

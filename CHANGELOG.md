@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.INFO
 
+## [1.4.7] - 2025-06-04 - [PR #44](https://github.com/MeteoraAg/meteora-pool-setup/pull/44)
+
+### Fixed
+- DLMM seed liquidity LFG price range
+
 ## [1.4.6] - 2025-05-08 - [PR #41](https://github.com/MeteoraAg/meteora-pool-setup/pull/12)
 ### Fixed
 - Fix wrong position owner passed in `seedLiquidityLfg` function.
