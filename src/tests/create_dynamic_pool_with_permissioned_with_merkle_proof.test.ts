@@ -1,6 +1,6 @@
 import { web3 } from "@coral-xyz/anchor"
 import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
-import AlphaVault, { PermissionWithMerkleProof } from "@meteora-ag/alpha-vault"
+import AlphaVault, { WhitelistMode } from "@meteora-ag/alpha-vault"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -247,7 +247,9 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 			cluster: "localhost"
 		})
 
-		expect(alphaVault.vault.whitelistMode).toEqual(PermissionWithMerkleProof)
+		expect(alphaVault.vault.whitelistMode).toEqual(
+			WhitelistMode.PermissionWithMerkleProof
+		)
 
 		// 3. Create merkle proof
 		const tree = await createMerkleTree(whitelistList)

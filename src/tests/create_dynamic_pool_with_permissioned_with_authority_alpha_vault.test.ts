@@ -1,6 +1,6 @@
 import { web3 } from "@coral-xyz/anchor"
 import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
-import AlphaVault, { PermissionWithAuthority } from "@meteora-ag/alpha-vault"
+import AlphaVault, { WhitelistMode } from "@meteora-ag/alpha-vault"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,
@@ -246,7 +246,9 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 			cluster: "localhost"
 		})
 
-		expect(alphaVault.vault.whitelistMode).toEqual(PermissionWithAuthority)
+		expect(alphaVault.vault.whitelistMode).toEqual(
+			WhitelistMode.PermissionWithAuthority
+		)
 
 		{
 			const depositAmount = new BN(5 * 10 ** 8)

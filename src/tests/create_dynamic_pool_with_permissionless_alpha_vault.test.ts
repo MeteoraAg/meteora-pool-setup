@@ -2,9 +2,9 @@ import { web3 } from "@coral-xyz/anchor"
 import AmmImpl from "@mercurial-finance/dynamic-amm-sdk"
 import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
 import AlphaVault, {
-	Permissionless,
 	PoolType,
-	VaultMode
+	VaultMode,
+	WhitelistMode
 } from "@meteora-ag/alpha-vault"
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -231,7 +231,7 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 		expect(alphaVault.vault.quoteMint).toEqual(SOL_TOKEN_MINT)
 		expect(alphaVault.vault.poolType).toEqual(PoolType.DAMM)
 		expect(alphaVault.vault.vaultMode).toEqual(VaultMode.FCFS)
-		expect(alphaVault.vault.whitelistMode).toEqual(Permissionless)
+		expect(alphaVault.vault.whitelistMode).toEqual(WhitelistMode.Permissionless)
 	})
 })
 
@@ -425,6 +425,6 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
 		expect(alphaVault.vault.quoteMint).toEqual(SOL_TOKEN_MINT)
 		expect(alphaVault.vault.poolType).toEqual(PoolType.DAMM)
 		expect(alphaVault.vault.vaultMode).toEqual(VaultMode.PRORATA)
-		expect(alphaVault.vault.whitelistMode).toEqual(Permissionless)
+		expect(alphaVault.vault.whitelistMode).toEqual(WhitelistMode.Permissionless)
 	})
 })

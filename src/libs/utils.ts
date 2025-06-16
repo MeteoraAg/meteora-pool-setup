@@ -1,13 +1,7 @@
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes"
 import { simulateTransaction } from "@coral-xyz/anchor/dist/cjs/utils/rpc"
 import { ActivationType as DynamicAmmActivationType } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/types"
-import {
-	PermissionWithAuthority,
-	PermissionWithMerkleProof,
-	Permissionless,
-	PoolType,
-	WhitelistMode
-} from "@meteora-ag/alpha-vault"
+import { PoolType, WhitelistMode } from "@meteora-ag/alpha-vault"
 import { ActivationType as DammV2ActivationType } from "@meteora-ag/cp-amm-sdk"
 import { ActivationType as DlmmActivationType } from "@meteora-ag/dlmm"
 import { getMint } from "@solana/spl-token"
@@ -300,11 +294,11 @@ export function getAlphaVaultWhitelistMode(
 	mode: WhitelistModeConfig
 ): WhitelistMode {
 	if (mode == WhitelistModeConfig.Permissionless) {
-		return Permissionless
+		return WhitelistMode.Permissionless
 	} else if (mode == WhitelistModeConfig.PermissionedWithAuthority) {
-		return PermissionWithAuthority
+		return WhitelistMode.PermissionWithAuthority
 	} else if (mode == WhitelistModeConfig.PermissionedWithMerkleProof) {
-		return PermissionWithMerkleProof
+		return WhitelistMode.PermissionWithMerkleProof
 	} else {
 		throw new Error(`Unsupported alpha vault whitelist mode: ${mode}`)
 	}
