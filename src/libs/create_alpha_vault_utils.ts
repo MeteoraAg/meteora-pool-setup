@@ -33,6 +33,25 @@ import {
 	runSimulateTransaction
 } from "./utils"
 
+export function getClusterFromProgramId(alphaVaultProgramId: PublicKey): string {
+	let cluster = "mainnet-beta"
+	switch (alphaVaultProgramId.toString()) {
+		case ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]:
+			cluster = "mainnet-beta"
+			break
+		case ALPHA_VAULT_PROGRAM_IDS["devnet"]:
+			cluster = "devnet"
+			break
+		case ALPHA_VAULT_PROGRAM_IDS["localhost"]:
+			cluster = "localhost"
+			break
+		default:
+			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
+	}
+
+	return cluster
+}
+
 export async function createFcfsAlphaVault(
 	connection: Connection,
 	wallet: Wallet,
@@ -77,21 +96,7 @@ export async function createFcfsAlphaVault(
 
 	const alphaVaultProgramId =
 		opts?.alphaVaultProgramId.toBase58() ?? ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]
-	let cluster = ""
-
-	switch (alphaVaultProgramId) {
-		case ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]:
-			cluster = "mainnet-beta"
-			break
-		case ALPHA_VAULT_PROGRAM_IDS["devnet"]:
-			cluster = "devnet"
-			break
-		case ALPHA_VAULT_PROGRAM_IDS["localhost"]:
-			cluster = "localhost"
-			break
-		default:
-			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
-	}
+	let cluster = getClusterFromProgramId(new PublicKey(alphaVaultProgramId))
 
 	// @ts-expect-error: Transaction version difference
 	const initAlphaVaultTx = (await AlphaVault.createCustomizableFcfsVault(
@@ -180,21 +185,7 @@ export async function createProrataAlphaVault(
 
 	const alphaVaultProgramId =
 		opts?.alphaVaultProgramId.toBase58() ?? ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]
-	let cluster = ""
-
-	switch (alphaVaultProgramId) {
-		case ALPHA_VAULT_PROGRAM_IDS["mainnet-beta"]:
-			cluster = "mainnet-beta"
-			break
-		case ALPHA_VAULT_PROGRAM_IDS["devnet"]:
-			cluster = "devnet"
-			break
-		case ALPHA_VAULT_PROGRAM_IDS["localhost"]:
-			cluster = "localhost"
-			break
-		default:
-			throw new Error(`Invalid alpha vault program id ${alphaVaultProgramId}`)
-	}
+	let cluster = getClusterFromProgramId(new PublicKey(alphaVaultProgramId))
 
 	// @ts-expect-error: Transaction version difference
 	const initAlphaVaultTx = (await AlphaVault.createCustomizableProrataVault(

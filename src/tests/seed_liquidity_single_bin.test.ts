@@ -126,7 +126,7 @@ describe("Test Seed Liquidity Single Bin", () => {
 		)
 
 		const slot = await connection.getSlot()
-		const activationPoint = new BN(slot).add(new BN(100))
+		const activationPoint = new BN(slot).add(new BN(100)).toNumber()
 
 		const config: MeteoraConfig = {
 			dryRun: false,

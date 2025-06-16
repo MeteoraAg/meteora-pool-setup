@@ -1,6 +1,6 @@
 {
 	"name": "meteora_pool_setup",
-	"version": "1.4.7",
+	"version": "1.4.8",
 	"main": "index.js",
 	"scripts": {
 		"format": "bun prettier ./src --write",
@@ -12,9 +12,9 @@
 		"start-test-validator": "solana-test-validator --bind-address 0.0.0.0 --account-dir ./src/tests/artifacts/accounts --bpf-program LbVRzDTvBDEcrthxfZ4RL6yiq3uZw8bS6MwtdY6UhFQ ./src/tests/artifacts/lb_clmm.so --bpf-program Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB ./src/tests/artifacts/dynamic_amm.so --bpf-program 24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi ./src/tests/artifacts/dynamic_vault.so --bpf-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s ./src/tests/artifacts/metaplex.so --bpf-program SNPmGgnywBvvrAKMLundzG6StojyHTHDLu7T4sdhP4k ./src/tests/artifacts/alpha_vault.so --mint bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1 --reset"
 	},
 	"dependencies": {
-		"@coral-xyz/anchor": "^0.28.0",
+		"@coral-xyz/anchor": "^0.31.1",
 		"@mercurial-finance/dynamic-amm-sdk": "^1.1.19",
-		"@meteora-ag/alpha-vault": "1.1.13-rc.2",
+		"@meteora-ag/alpha-vault": "1.1.14",
 		"@meteora-ag/cp-amm-sdk": "1.0.2",
 		"@meteora-ag/dlmm": "1.5.3",
 		"@meteora-ag/m3m3": "^1.0.5",

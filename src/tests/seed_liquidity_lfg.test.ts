@@ -134,7 +134,7 @@ describe.only("Test Seed Liquidity LFG", () => {
 		)
 
 		const slot = await connection.getSlot()
-		const activationPoint = new BN(slot).add(new BN(100))
+		const activationPoint = new BN(slot).add(new BN(100)).toNumber()
 
 		const config: MeteoraConfig = {
 			dryRun: false,
@@ -192,17 +192,6 @@ describe.only("Test Seed Liquidity LFG", () => {
 		const minPrice = 0.005
 		const maxPrice = 0.1
 
-		const minPricePerLamport = DLMM.getPricePerLamport(
-			WEN_DECIMALS,
-			USDC_DECIMALS,
-			minPrice
-		)
-		const maxPricePerLamport = DLMM.getPricePerLamport(
-			WEN_DECIMALS,
-			USDC_DECIMALS,
-			maxPrice
-		)
-
 		await seedLiquidityLfg(
 			connection,
 			payerKeypair,
@@ -214,8 +203,8 @@ describe.only("Test Seed Liquidity LFG", () => {
 			USDC,
 			seedAmount,
 			curvature,
-			Number(minPricePerLamport),
-			Number(maxPricePerLamport),
+			minPrice,
+			maxPrice,
 			lockReleasePoint,
 			seedTokenXToPositionOwner,
 			dryRun,

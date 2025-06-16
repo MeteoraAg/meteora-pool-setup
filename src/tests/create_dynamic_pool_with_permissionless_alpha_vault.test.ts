@@ -39,6 +39,8 @@ import {
 	payerWallet,
 	rpcUrl
 } from "./setup"
+import { Clock, ClockLayout } from "@meteora-ag/dlmm"
+import { BN } from "bn.js"
 
 describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 	const WEN_DECIMALS = 5
@@ -225,8 +227,9 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 			ALPHA_VAULT_PROGRAM_ID
 		)
 
-		// @ts-expect-error: Connection version difference
-		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey)
+		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
+			cluster: "localhost"
+		})
 		expect(alphaVault.vault.baseMint).toEqual(WEN)
 		expect(alphaVault.vault.quoteMint).toEqual(SOL_TOKEN_MINT)
 		expect(alphaVault.vault.poolType).toEqual(PoolType.DAMM)

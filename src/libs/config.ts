@@ -226,7 +226,17 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 				},
 				whitelistFilepath: { type: "string", nullable: true },
 				chunkSize: { type: "number", nullable: true },
-				kvProofFilepath: { type: "string", nullable: true }
+				kvProofFilepath: { type: "string", nullable: true },
+				merkleProofBaseUrl: { type: "string" },
+				cloudflareKvProofUpload: {
+					type: "object",
+					nullable: true,
+					properties: {
+						kvNameSpaceId: { type: "string" },
+						accountId: { type: "string" },
+						apiKey: { type: "string" }
+					}
+				}
 			},
 			required: [
 				"poolType",
@@ -429,6 +439,12 @@ export interface DlmmConfig {
 	creatorPoolOnOffControl: boolean
 }
 
+export interface CloudflareKvProofUploadConfig {
+	kvNamespaceId: string
+	accountId: string
+	apiKey: string
+}
+
 export interface FcfsAlphaVaultConfig {
 	poolType: PoolTypeConfig
 	alphaVaultType: AlphaVaultTypeConfig
@@ -446,9 +462,11 @@ export interface FcfsAlphaVaultConfig {
 	escrowFee: number
 	// whitelist mode: permissionless / permission_with_merkle_proof / permission_with_authority
 	whitelistMode: WhitelistModeConfig
+	merkleProofBaseUrl: string
 	whitelistFilepath?: string
 	chunkSize?: number
 	kvProofFilepath?: string
+	cloudflareKvProofUpload?: CloudflareKvProofUploadConfig
 }
 
 export interface ProrataAlphaVaultConfig {
@@ -466,9 +484,11 @@ export interface ProrataAlphaVaultConfig {
 	escrowFee: number
 	// whitelist mode: permissionless / permission_with_merkle_proof / permission_with_authority
 	whitelistMode: WhitelistModeConfig
+	merkleProofBaseUrl: string
 	whitelistFilepath?: string
 	chunkSize?: number
 	kvProofFilepath?: string
+	cloudflareKvProofUpload?: CloudflareKvProofUploadConfig
 }
 
 export interface LockLiquidityConfig {
