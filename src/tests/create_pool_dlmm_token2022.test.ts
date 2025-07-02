@@ -10,6 +10,7 @@ import {
 } from "../libs/config"
 import { ExtensionType } from "@solana/spl-token"
 import { createToken2022, mintToToken2022 } from "./utils"
+import { BN } from "bn.js"
 
 const keypairFilePath =
 	"./src/tests/keys/localnet/admin-bossj3JvwiNK7pvjr149DqdtJxf2gdygbcmEPTkb2F1.json"
@@ -46,7 +47,7 @@ describe("Test Create Dlmm Pool with token2022", () => {
 			WEN,
 			payerKeypair,
 			payerKeypair.publicKey,
-			WEN_SUPPLY * 10 ** WEN_DECIMALS
+			new BN(WEN_SUPPLY).mul(new BN(10 ** WEN_DECIMALS))
 		)
 
 		await mintToToken2022(
@@ -55,7 +56,7 @@ describe("Test Create Dlmm Pool with token2022", () => {
 			USDC,
 			payerKeypair,
 			payerKeypair.publicKey,
-			USDC_SUPPLY * 10 ** USDC_DECIMALS
+			new BN(USDC_SUPPLY).mul(new BN(10 ** USDC_DECIMALS))
 		)
 
 		await mintToToken2022(
@@ -64,7 +65,7 @@ describe("Test Create Dlmm Pool with token2022", () => {
 			JUP,
 			payerKeypair,
 			payerKeypair.publicKey,
-			JUP_SUPPLY * 10 ** JUP_DECIMALS
+			new BN(JUP_SUPPLY).mul(new BN(10 ** JUP_DECIMALS))
 		)
 	})
 
@@ -93,8 +94,10 @@ describe("Test Create Dlmm Pool with token2022", () => {
 			lfgSeedLiquidity: null,
 			singleBinSeedLiquidity: null,
 			m3m3: null,
-			setDlmmPoolStatus: null
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null
 		}
+
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, USDC, {
 			cluster: "localhost",
 			programId: DLMM_PROGRAM_ID
@@ -126,8 +129,10 @@ describe("Test Create Dlmm Pool with token2022", () => {
 			lfgSeedLiquidity: null,
 			singleBinSeedLiquidity: null,
 			m3m3: null,
-			setDlmmPoolStatus: null
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null
 		}
+
 		await createPermissionlessDlmmPool(config, connection, payerWallet, WEN, JUP, {
 			cluster: "localhost",
 			programId: DLMM_PROGRAM_ID

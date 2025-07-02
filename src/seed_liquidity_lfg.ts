@@ -45,7 +45,8 @@ import {
 	createAssociatedTokenAccountInstruction,
 	createTransferInstruction,
 	getAssociatedTokenAddressSync,
-	getMint
+	getMint,
+	unpackMint
 } from "@solana/spl-token"
 
 async function main() {
@@ -67,8 +68,12 @@ async function main() {
 		throw new Error("Missing baseMint in configuration")
 	}
 	const baseMint = new PublicKey(config.baseMint)
-	const baseMintAccount = await getMint(connection, baseMint, connection.commitment)
-	const baseDecimals = baseMintAccount.decimals
+	const baseMintAccount = await connection.getAccountInfo(
+		baseMint,
+		connection.commitment
+	)
+	const baseMintState = unpackMint(baseMint, baseMintAccount, baseMintAccount.owner)
+	const baseDecimals = baseMintState.decimals
 
 	let quoteMint = getQuoteMint(config.quoteSymbol, config.quoteMint)
 	const quoteDecimals = await getQuoteDecimals(
@@ -92,6 +97,7 @@ async function main() {
 		throw new Error(`Missing DLMM LFG seed liquidity in configuration`)
 	}
 
+	// @ts-expect-error: Connection version difference
 	const pair = await DLMM.create(connection, poolKey, {
 		cluster: "mainnet-beta"
 	})
@@ -112,7 +118,6 @@ async function main() {
 	)
 	const positionOwner = new PublicKey(config.lfgSeedLiquidity.positionOwner)
 	const feeOwner = new PublicKey(config.lfgSeedLiquidity.feeOwner)
-	const operator = operatorKeypair.publicKey
 	const lockReleasePoint = new BN(config.lfgSeedLiquidity.lockReleasePoint)
 	const seedTokenXToPositionOwner = config.lfgSeedLiquidity.seedTokenXToPositionOwner
 

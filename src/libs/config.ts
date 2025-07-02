@@ -1,10 +1,9 @@
-import { CollectFeeMode, FeeSchedulerMode } from "@meteora-ag/cp-amm-sdk"
+import Ajv, { JSONSchemaType } from "ajv"
 import {
 	extraConfigValidation,
 	parseCliArguments,
 	safeParseJsonFromFile
 } from "./utils"
-import Ajv, { JSONSchemaType } from "ajv"
 
 const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 	type: "object",
@@ -206,7 +205,7 @@ const CONFIG_SCHEMA: JSONSchemaType<MeteoraConfig> = {
 			nullable: true,
 			properties: {
 				poolType: {
-					enum: ["dynamic", "dlmm"]
+					enum: ["dynamic", "dlmm", "damm2"]
 				},
 				alphaVaultType: {
 					enum: ["fcfs", "prorata"]
@@ -535,7 +534,8 @@ export enum AlphaVaultTypeConfig {
 
 export enum PoolTypeConfig {
 	Dynamic = "dynamic",
-	Dlmm = "dlmm"
+	Dlmm = "dlmm",
+	DammV2 = "damm2"
 }
 
 export enum WhitelistModeConfig {

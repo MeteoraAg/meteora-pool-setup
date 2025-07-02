@@ -1,4 +1,10 @@
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes"
+import { simulateTransaction } from "@coral-xyz/anchor/dist/cjs/utils/rpc"
+import { ActivationType as DynamicAmmActivationType } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/types"
+import { PoolType, WhitelistMode } from "@meteora-ag/alpha-vault"
+import { ActivationType as DammV2ActivationType } from "@meteora-ag/cp-amm-sdk"
+import { ActivationType as DlmmActivationType } from "@meteora-ag/dlmm"
+import { getMint } from "@solana/spl-token"
 import {
 	ComputeBudgetProgram,
 	Connection,
@@ -9,32 +15,11 @@ import {
 	VersionedTransaction,
 	sendAndConfirmTransaction
 } from "@solana/web3.js"
+import BN from "bn.js"
+import { parse } from "csv-parse"
+import Decimal from "decimal.js"
 import * as fs from "fs"
 import { parseArgs } from "util"
-import { BN } from "bn.js"
-import Decimal from "decimal.js"
-import {
-	DEFAULT_SEND_TX_MAX_RETRIES,
-	SOL_TOKEN_DECIMALS,
-	SOL_TOKEN_MINT,
-	TX_SIZE_LIMIT_BYTES,
-	USDC_TOKEN_DECIMALS,
-	USDC_TOKEN_MINT
-} from "./constants"
-import { simulateTransaction } from "@coral-xyz/anchor/dist/cjs/utils/rpc"
-import { ActivationType as DynamicAmmActivationType } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/types"
-import { ActivationType as DlmmActivationType } from "@meteora-ag/dlmm"
-import {
-	ActivationType as DammV2ActivationType,
-	FeeSchedulerMode as DammV2FeeSchedulerMode
-} from "@meteora-ag/cp-amm-sdk"
-import {
-	PermissionWithAuthority,
-	PermissionWithMerkleProof,
-	Permissionless,
-	PoolType,
-	WhitelistMode
-} from "@meteora-ag/alpha-vault"
 import {
 	ActivationTypeConfig,
 	MeteoraConfig,
@@ -42,8 +27,13 @@ import {
 	PriceRoundingConfig,
 	WhitelistModeConfig
 } from ".."
-import { getMint } from "@solana/spl-token"
-import { parse } from "csv-parse"
+import {
+	DEFAULT_SEND_TX_MAX_RETRIES,
+	SOL_TOKEN_DECIMALS,
+	SOL_TOKEN_MINT,
+	USDC_TOKEN_DECIMALS,
+	USDC_TOKEN_MINT
+} from "./constants"
 
 export const DEFAULT_ADD_LIQUIDITY_CU = 800_000
 
@@ -85,7 +75,8 @@ export function extraConfigValidation(config: MeteoraConfig) {
 
 		if (
 			config.alphaVault.poolType != "dynamic" &&
-			config.alphaVault.poolType != "dlmm"
+			config.alphaVault.poolType != "dlmm" &&
+			config.alphaVault.poolType != "damm2"
 		) {
 			throw new Error(
 				`Alpha vault pool tyep ${config.alphaVault.poolType} isn't supported.`
@@ -144,7 +135,7 @@ export function getAmountInLamports(amount: number | string, decimals: number): 
 }
 
 export function getDecimalizedAmount(amountLamport: BN, decimals: number): BN {
-	return amountLamport / new BN(10 ** decimals)
+	return amountLamport.div(new BN(10 ** decimals))
 }
 
 export function getQuoteMint(quoteSymbol?: string, quoteMint?: string): PublicKey {
@@ -289,9 +280,11 @@ export function isPriceRoundingUp(
 
 export function getAlphaVaultPoolType(poolType: PoolTypeConfig): PoolType {
 	if (poolType == PoolTypeConfig.Dynamic) {
-		return PoolType.DYNAMIC
+		return PoolType.DAMM
 	} else if (poolType == PoolTypeConfig.Dlmm) {
 		return PoolType.DLMM
+	} else if (poolType == PoolTypeConfig.DammV2) {
+		return PoolType.DAMMV2
 	} else {
 		throw new Error(`Unsupported alpha vault pool type: ${poolType}`)
 	}
@@ -301,11 +294,11 @@ export function getAlphaVaultWhitelistMode(
 	mode: WhitelistModeConfig
 ): WhitelistMode {
 	if (mode == WhitelistModeConfig.Permissionless) {
-		return Permissionless
+		return WhitelistMode.Permissionless
 	} else if (mode == WhitelistModeConfig.PermissionedWithAuthority) {
-		return PermissionWithAuthority
+		return WhitelistMode.PermissionWithAuthority
 	} else if (mode == WhitelistModeConfig.PermissionedWithMerkleProof) {
-		return PermissionWithMerkleProof
+		return WhitelistMode.PermissionWithMerkleProof
 	} else {
 		throw new Error(`Unsupported alpha vault whitelist mode: ${mode}`)
 	}
@@ -314,9 +307,11 @@ export function getAlphaVaultWhitelistMode(
 export function toAlphaVaulSdkPoolType(poolType: PoolTypeConfig): PoolType {
 	switch (poolType) {
 		case PoolTypeConfig.Dynamic:
-			return PoolType.DYNAMIC
+			return PoolType.DAMM
 		case PoolTypeConfig.Dlmm:
 			return PoolType.DLMM
+		case PoolTypeConfig.DammV2:
+			return PoolType.DAMMV2
 		default:
 			throw new Error(`Unsupported alpha vault pool type: ${poolType}`)
 	}

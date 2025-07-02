@@ -1,7 +1,20 @@
-import { Keypair, PublicKey } from "@solana/web3.js"
-import { SOL_TOKEN_MINT } from "../libs/constants"
-import { createPermissionlessDynamicPool } from "../index"
 import { web3 } from "@coral-xyz/anchor"
+import AmmImpl from "@mercurial-finance/dynamic-amm-sdk"
+import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+import AlphaVault, {
+	PoolType,
+	VaultMode,
+	WhitelistMode
+} from "@meteora-ag/alpha-vault"
+import {
+	ASSOCIATED_TOKEN_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,
+	createMint,
+	getOrCreateAssociatedTokenAccount,
+	mintTo
+} from "@solana/spl-token"
+import { Keypair, PublicKey } from "@solana/web3.js"
+import { createPermissionlessDynamicPool } from "../index"
 import {
 	ActivationTypeConfig,
 	AlphaVaultTypeConfig,
@@ -11,37 +24,21 @@ import {
 	ProrataAlphaVaultConfig,
 	WhitelistModeConfig
 } from "../libs/config"
-import {
-	ASSOCIATED_TOKEN_PROGRAM_ID,
-	TOKEN_PROGRAM_ID,
-	createMint,
-	getOrCreateAssociatedTokenAccount,
-	mintTo
-} from "@solana/spl-token"
-import {
-	connection,
-	payerKeypair,
-	rpcUrl,
-	keypairFilePath,
-	payerWallet,
-	DLMM_PROGRAM_ID,
-	DYNAMIC_AMM_PROGRAM_ID,
-	ALPHA_VAULT_PROGRAM_ID
-} from "./setup"
-import { deriveCustomizablePermissionlessConstantProductPoolAddress } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils"
+import { SOL_TOKEN_MINT } from "../libs/constants"
 import {
 	createFcfsAlphaVault,
 	createProrataAlphaVault,
 	deriveAlphaVault
 } from "../libs/create_alpha_vault_utils"
-import AlphaVault, {
-	Permissionless,
-	PoolType,
-	VaultMode
-} from "@meteora-ag/alpha-vault"
-import { Clock, ClockLayout } from "@meteora-ag/dlmm"
-import { BN } from "bn.js"
-import AmmImpl from "@mercurial-finance/dynamic-amm-sdk"
+import {
+	ALPHA_VAULT_PROGRAM_ID,
+	DYNAMIC_AMM_PROGRAM_ID,
+	connection,
+	keypairFilePath,
+	payerKeypair,
+	payerWallet,
+	rpcUrl
+} from "./setup"
 
 describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 	const WEN_DECIMALS = 5
@@ -178,7 +175,10 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			dynamicAmmV2: null,
+			setDlmmPoolStatus: null,
+			m3m3: null
 		}
 
 		await createPermissionlessDynamicPool(
@@ -206,7 +206,7 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 		await createFcfsAlphaVault(
 			connection,
 			payerWallet,
-			PoolType.DYNAMIC,
+			PoolType.DAMM,
 			poolKey,
 			WEN,
 			SOL_TOKEN_MINT,
@@ -225,12 +225,13 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 			ALPHA_VAULT_PROGRAM_ID
 		)
 
+		// @ts-expect-error: Connection version difference
 		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey)
 		expect(alphaVault.vault.baseMint).toEqual(WEN)
 		expect(alphaVault.vault.quoteMint).toEqual(SOL_TOKEN_MINT)
-		expect(alphaVault.vault.poolType).toEqual(PoolType.DYNAMIC)
+		expect(alphaVault.vault.poolType).toEqual(PoolType.DAMM)
 		expect(alphaVault.vault.vaultMode).toEqual(VaultMode.FCFS)
-		expect(alphaVault.vault.whitelistMode).toEqual(Permissionless)
+		expect(alphaVault.vault.whitelistMode).toEqual(WhitelistMode.Permissionless)
 	})
 })
 
@@ -368,7 +369,10 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
-			singleBinSeedLiquidity: null
+			singleBinSeedLiquidity: null,
+			m3m3: null,
+			setDlmmPoolStatus: null,
+			dynamicAmmV2: null
 		}
 
 		await createPermissionlessDynamicPool(
@@ -396,7 +400,7 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
 		await createProrataAlphaVault(
 			connection,
 			payerWallet,
-			PoolType.DYNAMIC,
+			PoolType.DAMM,
 			poolKey,
 			WEN,
 			SOL_TOKEN_MINT,
@@ -415,11 +419,12 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
 			ALPHA_VAULT_PROGRAM_ID
 		)
 
+		// @ts-expect-error: Connection version difference
 		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey)
 		expect(alphaVault.vault.baseMint).toEqual(WEN)
 		expect(alphaVault.vault.quoteMint).toEqual(SOL_TOKEN_MINT)
-		expect(alphaVault.vault.poolType).toEqual(PoolType.DYNAMIC)
+		expect(alphaVault.vault.poolType).toEqual(PoolType.DAMM)
 		expect(alphaVault.vault.vaultMode).toEqual(VaultMode.PRORATA)
-		expect(alphaVault.vault.whitelistMode).toEqual(Permissionless)
+		expect(alphaVault.vault.whitelistMode).toEqual(WhitelistMode.Permissionless)
 	})
 })
