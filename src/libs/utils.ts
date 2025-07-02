@@ -222,6 +222,7 @@ export async function runSimulateTransaction(
 	}).add(...txs)
 
 	let simulateResp = await simulateTransaction(
+		// @ts-expect-error: Connection version difference
 		connection,
 		transaction,
 		signers,

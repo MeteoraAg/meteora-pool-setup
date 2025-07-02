@@ -125,6 +125,7 @@ export async function createFcfsAlphaVault(
 
 	if (dryRun) {
 		console.log(`\n> Simulating init alpha vault tx...`)
+		// @ts-expect-error: Keypair version difference
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
 			initAlphaVaultTx
 		])
@@ -213,6 +214,7 @@ export async function createProrataAlphaVault(
 
 	if (dryRun) {
 		console.log(`\n> Simulating init alpha vault tx...`)
+		// @ts-expect-error: Keypair version difference
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
 			initAlphaVaultTx
 		])
@@ -414,6 +416,7 @@ export async function createPermissionedAlphaVaultWithMerkleProof(
 
 		if (dryRun) {
 			console.log(`\n> Simulating init merkle root config tx...`)
+			// @ts-expect-error: Keypair version difference
 			await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
 				initMerkleRootConfigTx
 			])
@@ -543,6 +546,7 @@ export async function createPermissionedAlphaVaultWithAuthority(
 		connection,
 		instructions,
 		MAX_INSTRUCTIONS_PER_STAKE_ESCROW_ACCOUNTS_CREATED,
+		// @ts-expect-error: Keypair version difference
 		wallet.payer,
 		computeUnitPriceMicroLamports,
 		dryRun,

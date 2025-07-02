@@ -173,7 +173,8 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 				maxDepositCap: 0.5,
 				individualDepositingCap: 0.01,
 				escrowFee: 0,
-				whitelistMode: WhitelistModeConfig.Permissionless
+				whitelistMode: WhitelistModeConfig.Permissionless,
+				merkleProofBaseUrl: ""
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
@@ -226,7 +227,7 @@ describe("Test create permissonless dynamic pool with fcfs alpha vault", () => {
 			poolKey,
 			ALPHA_VAULT_PROGRAM_ID
 		)
-
+		// @ts-expect-error: Connection version difference
 		const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
 			cluster: "localhost"
 		})
@@ -368,7 +369,8 @@ describe("Test create permissonless dynamic pool with prorata alpha vault", () =
 				endVestingPoint,
 				maxBuyingCap: 10,
 				escrowFee: 0,
-				whitelistMode: WhitelistModeConfig.Permissionless
+				whitelistMode: WhitelistModeConfig.Permissionless,
+				merkleProofBaseUrl: ""
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,

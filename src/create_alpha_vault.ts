@@ -56,10 +56,8 @@ async function main() {
 	console.log(`- Using payer ${keypair.publicKey} to execute commands`)
 
 	const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL)
+	// @ts-expect-error Keypair version different
 	const wallet = new Wallet(keypair)
-	const provider = new AnchorProvider(connection, wallet, {
-		commitment: connection.commitment
-	})
 
 	if (!config.baseMint) {
 		throw new Error("Missing baseMint in configuration")

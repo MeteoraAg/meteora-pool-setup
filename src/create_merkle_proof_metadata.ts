@@ -121,6 +121,7 @@ async function main() {
 	console.log(`- Using payer ${keypair.publicKey} to execute commands`)
 
 	const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL)
+	// @ts-expect-error Keypair version different
 	const wallet = new Wallet(keypair)
 
 	if (!config.baseMint) {
@@ -173,6 +174,7 @@ async function main() {
 
 	const cluster = getClusterFromProgramId(alphaVaultProgramId)
 
+	// @ts-expect-error Connection version different
 	const alphaVault = await AlphaVault.create(connection, alphaVaultPubkey, {
 		cluster
 	})
@@ -192,6 +194,7 @@ async function main() {
 
 		if (config.dryRun) {
 			console.log(`\n> Simulating init merkle proof metadata tx...`)
+			// @ts-expect-error Keypair version different
 			await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
 				createMerkleProofMetadataTx
 			])
@@ -199,6 +202,7 @@ async function main() {
 			console.log(`>> Sending init merkle proof metadata transaction...`)
 			const initAlphaVaulTxHash = await sendAndConfirmTransaction(
 				connection,
+				// @ts-expect-error Transaction version different
 				createMerkleProofMetadataTx,
 				[wallet.payer],
 				{

@@ -166,7 +166,8 @@ describe("Test create dynamic pool with permissioned with merkle proof fcfs alph
 				maxDepositCap: 5,
 				individualDepositingCap: 0.01,
 				escrowFee: 0,
-				whitelistMode: WhitelistModeConfig.PermissionedWithMerkleProof
+				whitelistMode: WhitelistModeConfig.PermissionedWithMerkleProof,
+				merkleProofBaseUrl: ""
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,
