@@ -229,9 +229,9 @@ export async function createDammV2CustomizablePool(
 		console.log(`> Simulating init pool tx...`)
 		await runSimulateTransaction(
 			connection,
+			// @ts-expect-error: Keypair version difference
 			[wallet.payer, positionNft],
 			wallet.publicKey,
-			// @ts-expect-error: Transaction version difference
 			[initCustomizePoolTx]
 		)
 	} else {

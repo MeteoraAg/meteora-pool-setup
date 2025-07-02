@@ -168,7 +168,8 @@ describe("Test create dynamic pool with permissioned authority fcfs alpha vault"
 				maxDepositCap: 5,
 				individualDepositingCap: 0.01,
 				escrowFee: 0,
-				whitelistMode: WhitelistModeConfig.PermissionedWithAuthority
+				whitelistMode: WhitelistModeConfig.PermissionedWithAuthority,
+				merkleProofBaseUrl: ""
 			},
 			lockLiquidity: null,
 			lfgSeedLiquidity: null,

@@ -29,6 +29,7 @@ const keypairBuffer = fs.readFileSync(keypairFilePath, "utf-8")
 const rpcUrl = "http://127.0.0.1:8899"
 const connection = new Connection("http://127.0.0.1:8899", "confirmed")
 const payerKeypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(keypairBuffer)))
+// @ts-expect-error Keypair version different
 const payerWallet = new Wallet(payerKeypair)
 const DLMM_PROGRAM_ID = new PublicKey(DLMM_PROGRAM_IDS["localhost"])
 const DYNAMIC_AMM_PROGRAM_ID = new PublicKey(DYNAMIC_AMM_PROGRAM_IDS["localhost"])

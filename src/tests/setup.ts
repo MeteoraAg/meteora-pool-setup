@@ -15,6 +15,7 @@ export const connection = new Connection("http://127.0.0.1:8899", "confirmed")
 export const payerKeypair = Keypair.fromSecretKey(
 	new Uint8Array(JSON.parse(keypairBuffer))
 )
+// @ts-expect-error Keypair version different
 export const payerWallet = new Wallet(payerKeypair)
 export const DLMM_PROGRAM_ID = new PublicKey(DLMM_PROGRAM_IDS["localhost"])
 export const DYNAMIC_AMM_PROGRAM_ID = new PublicKey(

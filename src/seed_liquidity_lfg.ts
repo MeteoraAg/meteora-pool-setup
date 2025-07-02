@@ -61,8 +61,6 @@ async function main() {
 	console.log(`- Using payer ${keypair.publicKey} to execute commands`)
 
 	const connection = new Connection(config.rpcUrl, DEFAULT_COMMITMENT_LEVEL)
-	const wallet = new Wallet(keypair)
-	const DLMM_PROGRAM_ID = new PublicKey(LBCLMM_PROGRAM_IDS["mainnet-beta"])
 
 	if (!config.baseMint) {
 		throw new Error("Missing baseMint in configuration")

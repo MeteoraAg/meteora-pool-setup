@@ -107,6 +107,7 @@ export async function createPermissionlessDynamicPool(
 
 	if (config.dryRun) {
 		console.log(`> Simulating init pool tx...`)
+		// @ts-expect-error: Keypair version difference
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
 			initPoolTx
 		])
@@ -225,8 +226,8 @@ export async function createPermissionlessDlmmPool(
 
 	if (config.dryRun) {
 		console.log(`\n> Simulating init pool tx...`)
+		// @ts-expect-error: Keypair version difference
 		await runSimulateTransaction(connection, [wallet.payer], wallet.publicKey, [
-			// @ts-expect-error: Transaction version difference
 			initPoolTx
 		])
 	} else {

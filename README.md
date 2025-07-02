@@ -128,6 +128,9 @@ Also we need to provide the keypair for the payer wallet in `keypair.json` file.
 - `individualDepositingCap`: Individual deposit cap.
 - `escrowFee`: Fee to create stake escrow account.
 - `whitelistMode`: `permissionless` or `permission_with_merkle_proof` or `permission_with_authority`.
+- `whitelistFilepath`: Path to the whitelist file. Only applicable for `permission_with_merkle_proof` whitelist mode.
+- `merkleProofBaseUrl`: API base url to get merkle proof. Only applicable for `permission_with_merkle_proof` whitelist mode.
+- `cloudflareKvProofUpload`: Configuration for cloudflare kv proof upload. See https://github.com/MeteoraAg/cloudflare-kv-merkle-proof for more details on how to setup cloudflare kv. Leave this field as empty if you're hosting your own merkle proofs.
 
 ### Prorata configuration
 - `depositingPoint`: Absolute value that, the slot or timestamp that allows deposit depend on the pool activation type.

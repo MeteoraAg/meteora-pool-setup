@@ -30,6 +30,7 @@ const keypairBuffer = fs.readFileSync(keypairFilePath, "utf-8")
 const rpcUrl = "http://127.0.0.1:8899"
 const connection = new Connection("http://127.0.0.1:8899", "confirmed")
 const payerKeypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(keypairBuffer)))
+// @ts-expect-error Keypair version different
 const payerWallet = new Wallet(payerKeypair)
 const DLMM_PROGRAM_ID = new PublicKey(DLMM_PROGRAM_IDS["localhost"])
 
@@ -134,7 +135,7 @@ describe.only("Test Seed Liquidity LFG", () => {
 		)
 
 		const slot = await connection.getSlot()
-		const activationPoint = new BN(slot).add(new BN(100))
+		const activationPoint = new BN(slot).add(new BN(100)).toNumber()
 
 		const config: MeteoraConfig = {
 			dryRun: false,
@@ -149,7 +150,7 @@ describe.only("Test Seed Liquidity LFG", () => {
 				feeBps,
 				initialPrice,
 				activationType: ActivationTypeConfig.Slot,
-				activationPoint: activationPoint.toNumber(),
+				activationPoint: activationPoint,
 				priceRounding: PriceRoundingConfig.Up,
 				hasAlphaVault: false,
 				creatorPoolOnOffControl: false
@@ -192,17 +193,6 @@ describe.only("Test Seed Liquidity LFG", () => {
 		const minPrice = 0.005
 		const maxPrice = 0.1
 
-		const minPricePerLamport = DLMM.getPricePerLamport(
-			WEN_DECIMALS,
-			USDC_DECIMALS,
-			minPrice
-		)
-		const maxPricePerLamport = DLMM.getPricePerLamport(
-			WEN_DECIMALS,
-			USDC_DECIMALS,
-			maxPrice
-		)
-
 		await seedLiquidityLfg(
 			connection,
 			payerKeypair,
@@ -214,8 +204,8 @@ describe.only("Test Seed Liquidity LFG", () => {
 			USDC,
 			seedAmount,
 			curvature,
-			Number(minPricePerLamport),
-			Number(maxPricePerLamport),
+			minPrice,
+			maxPrice,
 			lockReleasePoint,
 			seedTokenXToPositionOwner,
 			dryRun,

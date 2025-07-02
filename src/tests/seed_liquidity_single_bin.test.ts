@@ -23,6 +23,7 @@ const keypairBuffer = fs.readFileSync(keypairFilePath, "utf-8")
 const rpcUrl = "http://127.0.0.1:8899"
 const connection = new Connection("http://127.0.0.1:8899", "confirmed")
 const payerKeypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(keypairBuffer)))
+// @ts-expect-error Keypair version different
 const payerWallet = new Wallet(payerKeypair)
 const DLMM_PROGRAM_ID = new PublicKey(DLMM_PROGRAM_IDS["localhost"])
 
@@ -126,7 +127,7 @@ describe("Test Seed Liquidity Single Bin", () => {
 		)
 
 		const slot = await connection.getSlot()
-		const activationPoint = new BN(slot).add(new BN(100))
+		const activationPoint = new BN(slot).add(new BN(100)).toNumber()
 
 		const config: MeteoraConfig = {
 			dryRun: false,
@@ -141,7 +142,7 @@ describe("Test Seed Liquidity Single Bin", () => {
 				feeBps,
 				initialPrice,
 				activationType: ActivationTypeConfig.Slot,
-				activationPoint: activationPoint.toNumber(),
+				activationPoint: activationPoint,
 				priceRounding: PriceRoundingConfig.Up,
 				hasAlphaVault: false,
 				creatorPoolOnOffControl: false
