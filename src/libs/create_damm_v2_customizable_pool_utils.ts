@@ -125,12 +125,15 @@ export async function createDammV2CustomizablePool(
 	const maxSqrtPrice = maxPrice
 		? getSqrtPriceFromPrice(maxPrice.toString(), baseDecimals, quoteDecimals)
 		: MAX_SQRT_PRICE
+	let initSqrtPrice = MIN_SQRT_PRICE
+	if (initPrice) {
+		initSqrtPrice = getSqrtPriceFromPrice(
+			initPrice.toString(),
+			baseDecimals,
+			quoteDecimals
+		)
+	}
 
-	let initSqrtPrice = getSqrtPriceFromPrice(
-		initPrice.toString(),
-		baseDecimals,
-		quoteDecimals
-	)
 	let minSqrtPrice = initSqrtPrice
 
 	let liquidityDelta = getLiquidityDeltaFromAmountA(
