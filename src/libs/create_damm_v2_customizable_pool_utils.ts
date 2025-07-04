@@ -144,10 +144,17 @@ export async function createDammV2CustomizablePool(
 
 	if (quoteAmount) {
 		tokenBAmount = getAmountInLamports(quoteAmount, quoteDecimals)
+		liquidityDelta = cpAmmInstance.getLiquidityDelta({
+			maxAmountTokenA: tokenAAmount,
+			maxAmountTokenB: tokenBAmount,
+			sqrtPrice: initSqrtPrice,
+			sqrtMinPrice: minSqrtPrice,
+			sqrtMaxPrice: maxSqrtPrice
+		})
 		// L = Δb / (√P_upper - √P_lower)
 		// √P_lower = √P_upper - Δb / L
-		const numerator = tokenBAmount.shln(128).div(liquidityDelta)
-		minSqrtPrice = initSqrtPrice.sub(numerator)
+		// const numerator = tokenBAmount.shln(128).div(liquidityDelta)
+		// minSqrtPrice = initSqrtPrice.sub(numerator)
 	}
 	console.log(
 		`- Using base token with amount = ${getDecimalizedAmount(tokenAAmount, baseDecimals)}`
